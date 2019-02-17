@@ -1,4 +1,6 @@
 #include "application.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 void
 A_help ( void )
