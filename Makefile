@@ -1,6 +1,6 @@
 CC = cc
 
-SRC = src/picuni.c
+SRC = src/picuni.c src/application.c
 
 NAME = picunic
 PREFIX = /usr/local
