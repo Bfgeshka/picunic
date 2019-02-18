@@ -4,8 +4,9 @@
 struct config
 {
 	int recursive;
+	int pathnumber;
 	float precision;
-	char * path;
+	char ** path;
 } config;
 
 #endif
