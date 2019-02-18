@@ -2,6 +2,7 @@
 #include "config.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <sys/stat.h>
 
 #define DEFAULT_PRECISION 0.95f
 
@@ -55,6 +56,13 @@ A_args ( int argc, char ** argv )
 	}
 
 	config.path = argv[argc - 1];
+
+	struct stat sb;
+	if ( stat( config.path, &sb ) != 0 || !S_ISDIR(sb.st_mode) )
+	{
+		fputs( "Invalid path.\n", stderr );
+		exit(EXIT_FAILURE);
+	}
 
 	printf( "path: %s\nrecursive: %d\nprecision: %f\n", config.path, config.recursive, config.precision );
 	return;
