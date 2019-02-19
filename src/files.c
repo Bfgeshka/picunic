@@ -1,4 +1,5 @@
 #include "files.h"
+#include "stringutils.h"
 #include <dirent.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -27,6 +28,8 @@ F_finish ( void )
 void
 F_load_all_paths ( void )
 {
+	string * str = construct_string(4096);
+
 	for ( size_t i = 0; i < directories.count; ++i )
 	{
 		char * curpath = directories.value[i];
@@ -39,12 +42,24 @@ F_load_all_paths ( void )
 			continue;
 		}
 
+		size_t dirsize = 0;
 		struct dirent * entry = NULL;
 		while ( ( entry = readdir(curdir) ) )
 		{
-			puts(entry->d_name);
+			stringset( str, "%s/%s", curpath, entry->d_name );
+
+			FILE * curfile = fopen( str->s, "r" );
+			if ( curfile )
+			{
+				dirsize++;
+				fclose(curfile);
+			}
 		}
 
-		(void)closedir(curdir);
+		fprintf( stderr, "Usable files in directory: %zu\n", dirsize );
+
+		closedir(curdir);
 	}
+
+	free_string(str);
 }
