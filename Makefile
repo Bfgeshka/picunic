@@ -5,7 +5,7 @@ SRC = src/picuni.c src/application.c src/files.c src/image.c src/stringutils.c
 NAME = picunic
 PREFIX = /usr/local
 
-CFLAGS = -O2 -g -Wall -Wextra -Wpedantic --std=c99 -D_DEFAULT_SOURCE -I./include
+CFLAGS = -O2 -g -Wall -Wextra -Wpedantic --std=c99 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE -I./include
 LDFLAGS := $(shell pkg-config --libs MagickWand)
 
 all: clean options ${NAME}
