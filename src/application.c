@@ -99,7 +99,7 @@ A_args ( int argc, char ** argv )
 		directories.value[0] = argv[argc - 1];
 	}
 
-	printf( "paths: %zu\nrecursive: %d\nprecision: %f\n", directories.count, config.recursive, config.precision );
+	fprintf( stderr, "paths: %zu\nrecursive: %d\nprecision: %f\n", directories.count, config.recursive, config.precision );
 	return;
 
 	A_args_invalid_argument:
