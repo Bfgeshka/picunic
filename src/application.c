@@ -1,5 +1,6 @@
 #include "application.h"
 #include "config.h"
+#include "files.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -44,7 +45,7 @@ A_args ( int argc, char ** argv )
 		goto A_args_show_help;
 
 	config.precision = DEFAULT_PRECISION;
-	config.pathnumber = 0;
+	directories.count = 0;
 
 	for ( int i = 1; i < argc; ++i )
 	{
@@ -74,7 +75,7 @@ A_args ( int argc, char ** argv )
 
 			case 'T':
 			{
-				config.pathnumber++;
+				directories.count++;
 				break;
 			}
 
@@ -86,9 +87,9 @@ A_args ( int argc, char ** argv )
 		}
 	}
 
-	if ( config.pathnumber > 0 )
+	if ( directories.count > 0 )
 	{
-		config.path = malloc( sizeof(char *) * config.pathnumber );
+		directories.value = malloc( sizeof(char *) * directories.count );
 		int pathindex = 0;
 
 		for ( int i = 1; i < argc; ++i )
@@ -99,7 +100,7 @@ A_args ( int argc, char ** argv )
 					goto A_args_invalid_argument;
 
 				S_A_check_path(argv[i + 1]);
-				config.path[pathindex] = argv[i + 1];
+				directories.value[pathindex] = argv[i + 1];
 				pathindex++;
 			}
 		}
@@ -108,14 +109,12 @@ A_args ( int argc, char ** argv )
 	{
 		S_A_check_path(argv[argc - 1]);
 
-		config.pathnumber = 1;
-		config.path = malloc( sizeof(char *) * config.pathnumber );
-		config.path[0] = argv[argc - 1];
+		directories.count = 1;
+		directories.value = malloc( sizeof(char *) * directories.count );
+		directories.value[0] = argv[argc - 1];
 	}
 
-//	config.path = argv[argc - 1];
-
-	printf( "paths: %d\nrecursive: %d\nprecision: %f\n", config.pathnumber, config.recursive, config.precision );
+	printf( "paths: %zu\nrecursive: %d\nprecision: %f\n", directories.count, config.recursive, config.precision );
 	return;
 
 	A_args_invalid_argument:
