@@ -3,24 +3,8 @@
 #include "files.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/stat.h>
 
 #define DEFAULT_PRECISION 0.95f
-
-static void S_A_check_path ( char * path );
-
-static void
-S_A_check_path ( char * path )
-{
-	fprintf( stderr, "Checking path %s...\n", path );
-
-	struct stat sb;
-	if ( stat( path, &sb ) != 0 || !S_ISDIR(sb.st_mode) )
-	{
-		fputs( "Invalid path.\n", stderr );
-		exit(EXIT_FAILURE);
-	}
-}
 
 void
 A_help ( void )
@@ -99,7 +83,7 @@ A_args ( int argc, char ** argv )
 				if ( i + 1 == argc )
 					goto A_args_invalid_argument;
 
-				S_A_check_path(argv[i + 1]);
+				F_check_path(argv[i + 1]);
 				directories.value[pathindex] = argv[i + 1];
 				pathindex++;
 			}
@@ -107,7 +91,7 @@ A_args ( int argc, char ** argv )
 	}
 	else
 	{
-		S_A_check_path(argv[argc - 1]);
+		F_check_path(argv[argc - 1]);
 
 		directories.count = 1;
 		directories.value = malloc( sizeof(char *) * directories.count );
