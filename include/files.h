@@ -9,4 +9,8 @@ struct directories
 	char ** value;
 } directories;
 
+void F_load_all_paths ( void );
+void F_finish ( void );
+void F_check_path ( char * path );
+
 #endif
