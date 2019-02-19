@@ -1,11 +1,12 @@
+/* Macros */
 #include "application.h"
 #include "config.h"
 #include "files.h"
 #include <stdlib.h>
 #include <stdio.h>
-
 #define DEFAULT_PRECISION 0.95f
 
+/* Global scope */
 void
 A_help ( void )
 {
