@@ -48,16 +48,14 @@ F_load_all_paths ( void )
 		{
 			stringset( str, "%s/%s", curpath, entry->d_name );
 
-			FILE * curfile = fopen( str->s, "r" );
-			if ( curfile )
+			struct stat st;
+			if ( stat( str->s, &st ) == 0 && S_ISREG(st.st_mode) )
 			{
 				dirsize++;
-				fclose(curfile);
 			}
 		}
 
 		fprintf( stderr, "Usable files in directory: %zu\n", dirsize );
-
 		closedir(curdir);
 	}
 
