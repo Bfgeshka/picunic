@@ -6,7 +6,7 @@ NAME = picunic
 PREFIX = /usr/local
 
 CFLAGS = -O2 -g -Wall -Wextra -Wpedantic --std=c99 -D_DEFAULT_SOURCE -I./include
-LDFLAGS =
+LDFLAGS := $(shell pkg-config --libs MagickWand)
 
 all: clean options ${NAME}
 
