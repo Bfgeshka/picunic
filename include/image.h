@@ -7,4 +7,6 @@ typedef struct img
 	char * path;
 } img;
 
+void I_process ( char * path );
+
 #endif
