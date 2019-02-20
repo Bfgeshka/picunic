@@ -12,7 +12,7 @@ S_I_check ( char * path )
 	string * str = construct_string(2048);
 	stringset( str, "%s", path );
 
-	InitializeMagick(path);
+	InitializeMagick(NULL);
 	GetExceptionInfo(&exception);
 
 	ImageInfo * image_info = CloneImageInfo((ImageInfo *)NULL);
@@ -32,7 +32,7 @@ S_I_check ( char * path )
 		goto S_I_check_onexit;
 	}
 
-	Image * resize_image = ResizeImage( image, 64, 64, LanczosFilter, 1.0 ,&exception );
+	Image * resize_image = ResizeImage( image, 32, 32, LanczosFilter, 1.0 ,&exception );
 	DestroyImage(image);
 
 	if ( resize_image == (Image *)NULL )
