@@ -2,6 +2,7 @@
 #include "config.h"
 #include "files.h"
 #include "stringutils.h"
+#include "image.h"
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
@@ -23,7 +24,8 @@ S_F_get_if_image ( char * path )
 	{
 		case 0:
 		{
-			fprintf( stderr, "Match: %s\n", path );
+//			fprintf( stderr, "Match: %s\n", path );
+			I_process(path);
 			return 1;
 		}
 		case REG_NOMATCH:
@@ -66,7 +68,7 @@ S_F_load_path ( char * path )
 			if ( stat( str->s, &st ) == 0 )
 			{
 				if ( S_ISREG(st.st_mode) )
-					dirsize += S_F_get_if_image(entry->d_name);
+					dirsize += S_F_get_if_image(str->s);
 
 				if ( config.recursive && S_ISDIR(st.st_mode) )
 					S_F_load_path(str->s);
