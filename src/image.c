@@ -2,7 +2,7 @@
 #include "stringutils.h"
 #include <magick/api.h>
 #include <string.h>
-#define PICSIZE 32
+#define PICSIZE 8
 
 static void S_I_check ( char * path );
 
