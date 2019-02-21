@@ -5,6 +5,7 @@
 struct config
 {
 	int recursive;
+	unsigned avghash_side;
 	float precision;
 } config;
 

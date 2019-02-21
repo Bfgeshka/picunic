@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #define DEFAULT_PRECISION 0.95f
+#define DEFAULT_AVGHASH_SIDE 8
 
 /* Global scope */
 void
@@ -30,6 +31,7 @@ A_args ( int argc, char ** argv )
 		goto A_args_show_help;
 
 	config.precision = DEFAULT_PRECISION;
+	config.avghash_side = DEFAULT_AVGHASH_SIDE;
 	directories.count = 0;
 
 	for ( int i = 1; i < argc; ++i )
