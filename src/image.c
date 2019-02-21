@@ -36,10 +36,10 @@ S_I_check ( char * path )
 	Image * resize_image = ResizeImage( image, config.avghash_side, config.avghash_side, LanczosFilter, 1.0 ,&ex );
 	GrayscalePseudoClassImage( resize_image, 1 );
 
-	QuantizeInfo quant;
-	GetQuantizeInfo(&quant);
-	quant.number_colors = 64;
-	QuantizeImage( &quant, resize_image );
+//	QuantizeInfo quant;
+//	GetQuantizeInfo(&quant);
+//	quant.number_colors = 64;
+//	QuantizeImage( &quant, resize_image );
 
 	DestroyImage(image);
 
@@ -54,7 +54,7 @@ S_I_check ( char * path )
 	(void)strcpy( image_info->filename, str->s );
 	FILE * output = fopen( str->s, "w" );
 
-	fprintf( stderr, "Writing %s with res %lux%lu, colors: %lu...\n", image_info->filename, resize_image->columns, resize_image->rows, GetNumberColors( resize_image, stderr, &ex ) );
+	fprintf( stderr, "Writing %s with res %lux%lu, colors: %lu...\n", image_info->filename, resize_image->columns, resize_image->rows, GetNumberColors( resize_image, NULL, &ex ) );
 
 	if ( !WriteImagesFile( image_info, resize_image, output, &ex ) )
 		CatchException(&resize_image->exception);
