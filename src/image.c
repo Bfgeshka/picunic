@@ -1,31 +1,31 @@
 #include "image.h"
+#include "config.h"
 #include "stringutils.h"
 #include <magick/api.h>
 #include <string.h>
-#define PICSIZE 8
 
 static void S_I_check ( char * path );
 
 static void
 S_I_check ( char * path )
 {
-	ExceptionInfo exception;
+	ExceptionInfo ex;
 	string * str = construct_string(2048);
 	stringset( str, "%s", path );
 
 	InitializeMagick(NULL);
-	GetExceptionInfo(&exception);
+	GetExceptionInfo(&ex);
 
 	ImageInfo * image_info = CloneImageInfo((ImageInfo *)NULL);
 
 	(void)strcpy( image_info->filename, str->s );
 
 	fprintf( stderr, "Reading %s ...", image_info->filename );
-	Image * image = ReadImage( image_info, &exception );
+	Image * image = ReadImage( image_info, &ex );
 
 	fprintf( stderr, " %lu frames\n", GetImageListLength(image) );
-	if ( exception.severity != UndefinedException )
-		CatchException(&exception);
+	if ( ex.severity != UndefinedException )
+		CatchException(&ex);
 
 	if ( !image )
 	{
@@ -33,7 +33,7 @@ S_I_check ( char * path )
 		goto S_I_check_onexit;
 	}
 
-	Image * resize_image = ResizeImage( image, PICSIZE, PICSIZE, LanczosFilter, 1.0 ,&exception );
+	Image * resize_image = ResizeImage( image, config.avghash_side, config.avghash_side, LanczosFilter, 1.0 ,&ex );
 	GrayscalePseudoClassImage( resize_image, 1 );
 
 	DestroyImage(image);
@@ -41,7 +41,7 @@ S_I_check ( char * path )
 	if ( resize_image == (Image *)NULL )
 	{
 		fputs( "Failed to resize.\n", stderr );
-		CatchException(&exception);
+		CatchException(&ex);
 		goto S_I_check_onexit;
 	}
 
@@ -51,7 +51,7 @@ S_I_check ( char * path )
 
 	fprintf( stderr, "Writing %s with res %lux%lu...\n", image_info->filename, resize_image->columns, resize_image->rows );
 
-	if ( !WriteImagesFile( image_info, resize_image, output, &exception ) )
+	if ( !WriteImagesFile( image_info, resize_image, output, &ex ) )
 		CatchException(&resize_image->exception);
 
 	fclose(output);
@@ -60,7 +60,7 @@ S_I_check ( char * path )
 	S_I_check_onexit:
 	free_string(str);
 	DestroyImageInfo(image_info);
-	DestroyExceptionInfo(&exception);
+	DestroyExceptionInfo(&ex);
 	DestroyMagick();
 }
 
