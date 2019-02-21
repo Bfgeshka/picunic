@@ -2,6 +2,7 @@
 #include "stringutils.h"
 #include <magick/api.h>
 #include <string.h>
+#define PICSIZE 32
 
 static void S_I_check ( char * path );
 
@@ -32,7 +33,9 @@ S_I_check ( char * path )
 		goto S_I_check_onexit;
 	}
 
-	Image * resize_image = ResizeImage( image, 32, 32, LanczosFilter, 1.0 ,&exception );
+	Image * resize_image = ResizeImage( image, PICSIZE, PICSIZE, LanczosFilter, 1.0 ,&exception );
+	GrayscalePseudoClassImage( resize_image, 1 );
+
 	DestroyImage(image);
 
 	if ( resize_image == (Image *)NULL )
@@ -42,11 +45,17 @@ S_I_check ( char * path )
 		goto S_I_check_onexit;
 	}
 
-	stringcat( str, "%s", ".thumb.jpg" );
+	stringcat( str, "%s", ".thumb.jpg", image_info->magick );
 	(void)strcpy( image_info->filename, str->s );
+	FILE * output = fopen( str->s, "w" );
 
-	fprintf( stderr, "Writing %s ...\n", image_info->filename );
-	WriteImage( image_info, resize_image );
+	fprintf( stderr, "Writing %s with res %lux%lu...\n", image_info->filename, resize_image->columns, resize_image->rows );
+
+	if ( !WriteImagesFile( image_info, resize_image, output, &exception ) )
+		CatchException(&resize_image->exception);
+
+	fclose(output);
+	DestroyImage(resize_image);
 
 	S_I_check_onexit:
 	free_string(str);
