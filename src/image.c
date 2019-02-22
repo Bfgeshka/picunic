@@ -5,9 +5,18 @@
 #include <string.h>
 
 static void S_I_check ( char * path );
-static PixelPacket S_I_get_mean ( HistogramColorPacket *, unsigned long );
+static PixelPacket S_I_get_mean ( PixelPacket * pixels );
+static unsigned short S_I_compare_color ( PixelPacket mean, PixelPacket compared );
 
-static PixelPacket S_I_get_mean ( HistogramColorPacket * hist, unsigned long colnumb )
+static unsigned short S_I_compare_color ( PixelPacket mean, PixelPacket compared )
+{
+	int difference = mean.red - compared.red + mean.green - compared.green + mean.blue - compared.blue + mean.opacity - compared.opacity;
+	unsigned short retvalue = ( difference > 0 ) ? 0 : 1;
+//	printf( "Comparing with %d %d %d %d, result: %d\n", compared.red, compared.green, compared.blue, compared.opacity, retvalue );
+	return retvalue;
+}
+
+static PixelPacket S_I_get_mean ( PixelPacket * pixels )
 {
 //	fprintf( stderr, "Calculating mean color from %lu values...\n", colnumb );
 //	fprintf( stderr, "Max value: %d\n", MaxRGB );
@@ -18,18 +27,20 @@ static PixelPacket S_I_get_mean ( HistogramColorPacket * hist, unsigned long col
 	unsigned long colb = 0;
 	unsigned long cola = 0;
 
-	for ( unsigned long i = 0; i < colnumb; ++i )
+	unsigned short pixelnumb = config.avghash_side * config.avghash_side;
+
+	for ( unsigned long i = 0; i < pixelnumb; ++i )
 	{
-		colr += hist[i].pixel.red;
-		colg += hist[i].pixel.green;
-		colb += hist[i].pixel.blue;
-		cola += hist[i].pixel.opacity;
+		colr += pixels[i].red;
+		colg += pixels[i].green;
+		colb += pixels[i].blue;
+		cola += pixels[i].opacity;
 	}
 
-	pp.red = colr / colnumb;
-	pp.green = colg / colnumb;
-	pp.blue = colb / colnumb;
-	pp.opacity = cola / colnumb;
+	pp.red = colr / pixelnumb;
+	pp.green = colg / pixelnumb;
+	pp.blue = colb / pixelnumb;
+	pp.opacity = cola / pixelnumb;
 
 	return pp;
 }
@@ -62,12 +73,6 @@ S_I_check ( char * path )
 	}
 
 	Image * resize_image = ResizeImage( image, config.avghash_side, config.avghash_side, LanczosFilter, 1.0 ,&ex );
-
-//	QuantizeInfo quant;
-//	GetQuantizeInfo(&quant);
-//	quant.number_colors = 64;
-//	QuantizeImage( &quant, resize_image );
-
 	DestroyImage(image);
 
 	if ( resize_image == (Image *)NULL )
@@ -79,21 +84,28 @@ S_I_check ( char * path )
 
 	GrayscalePseudoClassImage( resize_image, 1 );
 
-	unsigned long colnumb = 0;
-	HistogramColorPacket * hist = GetColorHistogram( resize_image, &colnumb, &ex );
-	PixelPacket mean = S_I_get_mean( hist, colnumb );
+	PixelPacket * pixels = GetImagePixels( resize_image, 0, 0, config.avghash_side, config.avghash_side );
+	PixelPacket mean = S_I_get_mean(pixels);
 	fprintf( stderr, "Mean value: (%d %d %d %d)\n", mean.red, mean.green, mean.blue, mean.opacity );
 
-	stringcat( str, "%s", ".thumb.jpg", image_info->magick );
-	(void)strcpy( image_info->filename, str->s );
-//	FILE * output = fopen( str->s, "w" );
-//
-//	fprintf( stderr, "Writing %s with res %lux%lu, colors: %lu...\n", image_info->filename, resize_image->columns, resize_image->rows, colnumb );
-//
-//	if ( !WriteImagesFile( image_info, resize_image, output, &ex ) )
-//		CatchException(&resize_image->exception);
-//
-//	fclose(output);
+	unsigned long long hash = 0;
+
+	for ( unsigned short u = 0, i = 0; u < config.avghash_side; ++u )
+		for ( unsigned short v = 0; v < config.avghash_side; ++v, ++i )
+			hash |= ( S_I_compare_color( mean, pixels[i] ) << i );
+//			if (  != 0 )
+//				hash |= ( 0x00000001 << i );
+
+	unsigned long long hashcp = hash;
+	while (hashcp)
+	{
+		printf("%llu", (hashcp & 1));
+		hashcp >>= 1;
+	}
+	printf("\n");
+
+	fprintf( stderr, "Image hash: %llx\n", hash );
+
 	DestroyImage(resize_image);
 
 	S_I_check_onexit:
