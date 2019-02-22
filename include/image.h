@@ -5,6 +5,7 @@
 typedef struct img
 {
 	char * path;
+	unsigned long long hash;
 } img;
 
 void I_process ( char * path );
