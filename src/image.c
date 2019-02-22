@@ -6,13 +6,13 @@
 
 static void S_I_check ( char * path );
 static PixelPacket S_I_get_mean ( PixelPacket * pixels );
-static unsigned short S_I_compare_color ( PixelPacket mean, PixelPacket compared );
+static unsigned char S_I_compare_color ( PixelPacket mean, PixelPacket compared );
 
-static unsigned short S_I_compare_color ( PixelPacket mean, PixelPacket compared )
+static unsigned char S_I_compare_color ( PixelPacket mean, PixelPacket compared )
 {
 	int difference = mean.red - compared.red + mean.green - compared.green + mean.blue - compared.blue + mean.opacity - compared.opacity;
 	unsigned short retvalue = ( difference > 0 ) ? 0 : 1;
-//	printf( "Comparing with %d %d %d %d, result: %d\n", compared.red, compared.green, compared.blue, compared.opacity, retvalue );
+	printf( "Comparing with %d %d %d %d, result: %d\n", compared.red, compared.green, compared.blue, compared.opacity, retvalue );
 	return retvalue;
 }
 
@@ -92,9 +92,12 @@ S_I_check ( char * path )
 
 	for ( unsigned short u = 0, i = 0; u < config.avghash_side; ++u )
 		for ( unsigned short v = 0; v < config.avghash_side; ++v, ++i )
+		{
+			printf("%ud ", i);
 			hash |= ( S_I_compare_color( mean, pixels[i] ) << i );
-//			if (  != 0 )
-//				hash |= ( 0x00000001 << i );
+//			if ( S_I_compare_color( mean, pixels[i] ) != 0 )
+//				hash |= ( 1 << i );
+		}
 
 	unsigned long long hashcp = hash;
 	while (hashcp)
