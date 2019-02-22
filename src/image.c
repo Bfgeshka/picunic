@@ -81,17 +81,19 @@ S_I_check ( char * path )
 
 	unsigned long colnumb = 0;
 	HistogramColorPacket * hist = GetColorHistogram( resize_image, &colnumb, &ex );
+	PixelPacket mean = S_I_get_mean( hist, colnumb );
+	fprintf( stderr, "Mean value: (%d %d %d %d)\n", mean.red, mean.green, mean.blue, mean.opacity );
 
 	stringcat( str, "%s", ".thumb.jpg", image_info->magick );
 	(void)strcpy( image_info->filename, str->s );
-	FILE * output = fopen( str->s, "w" );
-
-	fprintf( stderr, "Writing %s with res %lux%lu, colors: %lu...\n", image_info->filename, resize_image->columns, resize_image->rows, colnumb );
-
-	if ( !WriteImagesFile( image_info, resize_image, output, &ex ) )
-		CatchException(&resize_image->exception);
-
-	fclose(output);
+//	FILE * output = fopen( str->s, "w" );
+//
+//	fprintf( stderr, "Writing %s with res %lux%lu, colors: %lu...\n", image_info->filename, resize_image->columns, resize_image->rows, colnumb );
+//
+//	if ( !WriteImagesFile( image_info, resize_image, output, &ex ) )
+//		CatchException(&resize_image->exception);
+//
+//	fclose(output);
 	DestroyImage(resize_image);
 
 	S_I_check_onexit:
