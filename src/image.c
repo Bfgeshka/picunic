@@ -5,6 +5,34 @@
 #include <string.h>
 
 static void S_I_check ( char * path );
+static PixelPacket S_I_get_mean ( HistogramColorPacket *, unsigned long );
+
+static PixelPacket S_I_get_mean ( HistogramColorPacket * hist, unsigned long colnumb )
+{
+//	fprintf( stderr, "Calculating mean color from %lu values...\n", colnumb );
+//	fprintf( stderr, "Max value: %d\n", MaxRGB );
+
+	PixelPacket pp;
+	unsigned long colr = 0;
+	unsigned long colg = 0;
+	unsigned long colb = 0;
+	unsigned long cola = 0;
+
+	for ( unsigned long i = 0; i < colnumb; ++i )
+	{
+		colr += hist[i].pixel.red;
+		colg += hist[i].pixel.green;
+		colb += hist[i].pixel.blue;
+		cola += hist[i].pixel.opacity;
+	}
+
+	pp.red = colr / colnumb;
+	pp.green = colg / colnumb;
+	pp.blue = colb / colnumb;
+	pp.opacity = cola / colnumb;
+
+	return pp;
+}
 
 static void
 S_I_check ( char * path )
