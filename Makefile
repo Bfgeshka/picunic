@@ -7,7 +7,7 @@ PREFIX = /usr/local
 
 CFLAGS = -O2 -g -Wall -Wextra -Wpedantic --std=c99 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE
 LDFLAGS = -lGraphicsMagick
-INCLUDE := -I./include `GraphicsMagick-config --cppflags`
+INCLUDE := -I./include $(shell GraphicsMagick-config --cppflags)
 
 all: clean options ${NAME}
 
