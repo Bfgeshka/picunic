@@ -136,6 +136,17 @@ I_stats ( void )
 }
 
 void
+I_finish ( void )
+{
+	for ( size_t i = 0; i < List.length; ++i )
+	{
+		img * next = List.head->next;
+		free(List.head);
+		List.head = next;
+	}
+}
+
+void
 I_process ( char * path )
 {
 	S_I_check(path);
