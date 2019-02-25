@@ -1,3 +1,4 @@
+/* Macros */
 #include "image.h"
 #include "config.h"
 #include "stringutils.h"
@@ -6,6 +7,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+/* Local scope */
 static void S_I_check ( char * path );
 static PixelPacket S_I_get_mean ( PixelPacket * pixels );
 static unsigned char S_I_compare_color ( PixelPacket mean, PixelPacket compared );
@@ -15,16 +17,12 @@ S_I_compare_color ( PixelPacket mean, PixelPacket compared )
 {
 	int difference = mean.red - compared.red + mean.green - compared.green + mean.blue - compared.blue + mean.opacity - compared.opacity;
 	unsigned short retvalue = ( difference > 0 ) ? 0 : 1;
-//	printf( "Comparing with %d %d %d %d, result: %d\n", compared.red, compared.green, compared.blue, compared.opacity, retvalue );
 	return retvalue;
 }
 
 static PixelPacket
 S_I_get_mean ( PixelPacket * pixels )
 {
-//	fprintf( stderr, "Calculating mean color from %lu values...\n", colnumb );
-//	fprintf( stderr, "Max value: %d\n", MaxRGB );
-
 	PixelPacket pp;
 	unsigned long colr = 0;
 	unsigned long colg = 0;
@@ -108,6 +106,7 @@ S_I_check ( char * path )
 	DestroyMagick();
 }
 
+/* Global scope */
 void
 I_process ( char * path )
 {
