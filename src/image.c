@@ -7,7 +7,6 @@
 
 /* Local scope */
 static imagelist List;
-static unsigned short PixInSquare;
 
 static void S_I_check ( string * path );
 static PixelPacket S_I_get_mean ( PixelPacket * pixels );
@@ -30,7 +29,7 @@ S_I_hash_from_thumb ( Image * image, string * str )
 	pixels = GetImagePixels( image, 0, 0, config.avghash_side, config.avghash_side );
 	mean = S_I_get_mean(pixels);
 
-	for ( ; i < PixInSquare; ++i )
+	for ( ; i < config.square; ++i )
 		imagest->hash |= (uint_fast64_t)( (unsigned)( mean.red - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i;
 
 	S_I_add_to_list(imagest);
@@ -39,7 +38,7 @@ S_I_hash_from_thumb ( Image * image, string * str )
 static void
 S_I_compare ( img * img1, img * img2 )
 {
-	unsigned short similar_bits = PixInSquare;
+	unsigned similar_bits = config.square;
 	uint_fast64_t similarity_hash = img1->hash ^ img2->hash;
 
 	fprintf( stderr, "Comparing %" PRIxFAST64 " with %" PRIxFAST64 "... ", img1->hash, img2->hash );
@@ -50,7 +49,7 @@ S_I_compare ( img * img1, img * img2 )
 		similarity_hash &= similarity_hash - 1;
 	}
 
-	fprintf( stderr, " similar: %hu / %hu\n", similar_bits, PixInSquare );
+	fprintf( stderr, " similar: %u / %u\n", similar_bits, config.square );
 }
 
 static void
@@ -79,7 +78,7 @@ S_I_get_mean ( PixelPacket * pixels )
 	unsigned long cola = 0;
 
 	unsigned long i = 0;
-	for ( ; i < PixInSquare; ++i )
+	for ( ; i < config.square; ++i )
 	{
 		colr += pixels[i].red;
 		colg += pixels[i].green;
@@ -87,10 +86,10 @@ S_I_get_mean ( PixelPacket * pixels )
 		cola += pixels[i].opacity;
 	}
 
-	pp.red = colr / PixInSquare;
-	pp.green = colg / PixInSquare;
-	pp.blue = colb / PixInSquare;
-	pp.opacity = cola / PixInSquare;
+	pp.red = colr / config.square;
+	pp.green = colg / config.square;
+	pp.blue = colb / config.square;
+	pp.opacity = cola / config.square;
 
 	return pp;
 }
@@ -193,12 +192,6 @@ I_compare_all ( void )
 
 		currenthead = currenthead->next;
 	}
-}
-
-void
-I_init ( void )
-{
-	PixInSquare = config.avghash_side * config.avghash_side;
 }
 
 void
