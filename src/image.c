@@ -13,6 +13,28 @@ static void S_I_check ( string * path );
 static PixelPacket S_I_get_mean ( PixelPacket * pixels );
 static void S_I_add_to_list ( img * image );
 static void S_I_compare ( img * img1, img * img2 );
+static void S_I_hash_from_thumb ( Image * image, string * str );
+
+static void
+S_I_hash_from_thumb ( Image * image, string * str )
+{
+	unsigned short i = 0;
+	PixelPacket * pixels;
+	PixelPacket mean;
+
+	img * imagest;
+	imagest = malloc(sizeof(img));
+	imagest->path = str;
+	imagest->hash = 0;
+
+	pixels = GetImagePixels( image, 0, 0, config.avghash_side, config.avghash_side );
+	mean = S_I_get_mean(pixels);
+
+	for ( ; i < PixInSquare; ++i )
+		imagest->hash |= ( (uint_fast64_t)( (unsigned)( mean.red - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i );
+
+	S_I_add_to_list(imagest);
+}
 
 static void
 S_I_compare ( img * img1, img * img2 )
@@ -81,11 +103,6 @@ S_I_check ( string * instr )
 	ImageInfo * image_info;
 	Image * image;
 	Image * resized_image;
-	PixelPacket * pixels;
-	PixelPacket mean;
-	uint_fast64_t hash = 0;
-	img * imagest;
-	unsigned short i = 0;
 
 	string * str = stringcopy(instr);
 
@@ -93,7 +110,7 @@ S_I_check ( string * instr )
 	GetExceptionInfo(&ex);
 
 	image_info = CloneImageInfo((ImageInfo *)NULL);
-	(void)strcpy( image_info->filename, str->s );
+	strcpy( image_info->filename, str->s );
 
 	image = ReadImage( image_info, &ex );
 
@@ -121,18 +138,7 @@ S_I_check ( string * instr )
 	}
 
 	GrayscalePseudoClassImage( resized_image, 1 );
-
-	pixels = GetImagePixels( resized_image, 0, 0, config.avghash_side, config.avghash_side );
-	mean = S_I_get_mean(pixels);
-
-	for ( ; i < PixInSquare; ++i )
-		hash |= ( (uint_fast64_t)( (unsigned)( mean.red - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i );
-
-	imagest = malloc(sizeof(img));
-	imagest->path = str;
-	imagest->hash = hash;
-	S_I_add_to_list(imagest);
-
+	S_I_hash_from_thumb( resized_image, str );
 	DestroyImage(resized_image);
 
 	S_I_check_onexit:
