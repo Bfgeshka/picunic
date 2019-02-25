@@ -31,7 +31,7 @@ S_I_hash_from_thumb ( Image * image, string * str )
 	mean = S_I_get_mean(pixels);
 
 	for ( ; i < PixInSquare; ++i )
-		imagest->hash |= ( (uint_fast64_t)( (unsigned)( mean.red - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i );
+		imagest->hash |= (uint_fast64_t)( (unsigned)( mean.red - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i;
 
 	S_I_add_to_list(imagest);
 }
@@ -77,10 +77,9 @@ S_I_get_mean ( PixelPacket * pixels )
 	unsigned long colg = 0;
 	unsigned long colb = 0;
 	unsigned long cola = 0;
-	unsigned long i = 0;
-	unsigned short pixelnumb = config.avghash_side * config.avghash_side;
 
-	for ( ; i < pixelnumb; ++i )
+	unsigned long i = 0;
+	for ( ; i < PixInSquare; ++i )
 	{
 		colr += pixels[i].red;
 		colg += pixels[i].green;
@@ -88,10 +87,10 @@ S_I_get_mean ( PixelPacket * pixels )
 		cola += pixels[i].opacity;
 	}
 
-	pp.red = colr / pixelnumb;
-	pp.green = colg / pixelnumb;
-	pp.blue = colb / pixelnumb;
-	pp.opacity = cola / pixelnumb;
+	pp.red = colr / PixInSquare;
+	pp.green = colg / PixInSquare;
+	pp.blue = colb / PixInSquare;
+	pp.opacity = cola / PixInSquare;
 
 	return pp;
 }
