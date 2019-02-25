@@ -88,6 +88,8 @@ S_I_check ( char * path )
 	if ( !image )
 	{
 		fputs( "Null image data.\n", stderr );
+
+		free_string(str);
 		goto S_I_check_onexit;
 	}
 
@@ -98,6 +100,8 @@ S_I_check ( char * path )
 	{
 		fputs( "Failed to resize.\n", stderr );
 		CatchException(&ex);
+
+		free_string(str);
 		goto S_I_check_onexit;
 	}
 
@@ -115,14 +119,14 @@ S_I_check ( char * path )
 //	fprintf( stderr, "Image hash: %" PRIxFAST64 "\n", hash );
 
 	img * imagest = malloc(sizeof(img));
-	imagest->path = path;
+	imagest->path = str;
 	imagest->hash = hash;
 	S_I_add_to_list(imagest);
 
 	DestroyImage(resize_image);
 
 	S_I_check_onexit:
-	free_string(str);
+//	free_string(str);
 	DestroyImageInfo(image_info);
 	DestroyExceptionInfo(&ex);
 	DestroyMagick();
@@ -133,6 +137,13 @@ void
 I_stats ( void )
 {
 	fprintf( stderr, "Images processed successfully: %zu\n", List.length );
+
+	img * iter = List.head;
+	for ( size_t i = 0; i < List.length; ++i )
+	{
+		fprintf( stderr, "%s: %" PRIxFAST64 "\n", iter->path->s, iter->hash );
+		iter = iter->next;
+	}
 }
 
 void
@@ -141,6 +152,7 @@ I_finish ( void )
 	for ( size_t i = 0; i < List.length; ++i )
 	{
 		img * next = List.head->next;
+		free_string(List.head->path);
 		free(List.head);
 		List.head = next;
 	}

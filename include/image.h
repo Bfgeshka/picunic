@@ -2,6 +2,7 @@
 #define IMAGE_H_
 
 /* Macros */
+#include "stringutils.h"
 #include <stdint.h>
 #include <inttypes.h>
 #include <stdlib.h>
@@ -9,7 +10,7 @@
 /* Typedef */
 typedef struct img
 {
-	char * path;
+	string * path;
 	uint_fast64_t hash;
 
 	struct img * prev;
