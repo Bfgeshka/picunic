@@ -26,6 +26,18 @@ newstring ( string * str, size_t size )
 }
 
 string *
+stringcopy ( string * instr )
+{
+	string * str = malloc(sizeof(string));
+	str->length = instr->length;
+	str->bytes = instr->length;
+	str->s = malloc(instr->length);
+	strcpy( str->s, instr->s );
+
+	return str;
+}
+
+string *
 construct_string ( size_t size )
 {
 	string * str = malloc(sizeof(string));

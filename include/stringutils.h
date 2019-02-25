@@ -14,6 +14,7 @@ typedef struct string
 
 /* Protos */
 string * construct_string ( size_t );
+string * stringcopy ( string * );
 void newstring ( string *, size_t );
 void stringset ( string *, const char *, ... );
 void stringcat ( string *, const char *, ... );
