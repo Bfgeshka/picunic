@@ -17,11 +17,11 @@ static void S_I_compare ( img * img1, img * img2 );
 static void
 S_I_compare ( img * img1, img * img2 )
 {
+	unsigned short similar_bits = PixInSquare;
+	uint_fast64_t similarity_hash = img1->hash ^ img2->hash;
+
 	fprintf( stderr, "Comparing %" PRIxFAST64 " with %" PRIxFAST64 "... ", img1->hash, img2->hash );
 
-	unsigned short similar_bits = PixInSquare;
-
-	uint_fast64_t similarity_hash = img1->hash ^ img2->hash;
 	while ( similarity_hash != 0 )
 	{
 		similar_bits--;
@@ -55,10 +55,10 @@ S_I_get_mean ( PixelPacket * pixels )
 	unsigned long colg = 0;
 	unsigned long colb = 0;
 	unsigned long cola = 0;
-
+	unsigned long i = 0;
 	unsigned short pixelnumb = config.avghash_side * config.avghash_side;
 
-	for ( unsigned long i = 0; i < pixelnumb; ++i )
+	for ( ; i < pixelnumb; ++i )
 	{
 		colr += pixels[i].red;
 		colg += pixels[i].green;
@@ -78,16 +78,24 @@ static void
 S_I_check ( string * instr )
 {
 	ExceptionInfo ex;
+	ImageInfo * image_info;
+	Image * image;
+	Image * resized_image;
+	PixelPacket * pixels;
+	PixelPacket mean;
+	uint_fast64_t hash = 0;
+	img * imagest;
+	unsigned short i = 0;
+
 	string * str = stringcopy(instr);
 
 	InitializeMagick(NULL);
 	GetExceptionInfo(&ex);
 
-	ImageInfo * image_info = CloneImageInfo((ImageInfo *)NULL);
-
+	image_info = CloneImageInfo((ImageInfo *)NULL);
 	(void)strcpy( image_info->filename, str->s );
 
-	Image * image = ReadImage( image_info, &ex );
+	image = ReadImage( image_info, &ex );
 
 	if ( ex.severity != UndefinedException )
 		CatchException(&ex);
@@ -100,10 +108,10 @@ S_I_check ( string * instr )
 		goto S_I_check_onexit;
 	}
 
-	Image * resize_image = ResizeImage( image, config.avghash_side, config.avghash_side, LanczosFilter, 1.0 ,&ex );
+	resized_image = ResizeImage( image, config.avghash_side, config.avghash_side, LanczosFilter, 1.0 ,&ex );
 	DestroyImage(image);
 
-	if ( resize_image == (Image *)NULL )
+	if ( resized_image == (Image *)NULL )
 	{
 		fputs( "Failed to resize.\n", stderr );
 		CatchException(&ex);
@@ -112,22 +120,20 @@ S_I_check ( string * instr )
 		goto S_I_check_onexit;
 	}
 
-	GrayscalePseudoClassImage( resize_image, 1 );
+	GrayscalePseudoClassImage( resized_image, 1 );
 
-	PixelPacket * pixels = GetImagePixels( resize_image, 0, 0, config.avghash_side, config.avghash_side );
-	PixelPacket mean = S_I_get_mean(pixels);
+	pixels = GetImagePixels( resized_image, 0, 0, config.avghash_side, config.avghash_side );
+	mean = S_I_get_mean(pixels);
 
-	uint_fast64_t hash = 0;
-
-	for ( unsigned short i = 0; i < PixInSquare; ++i )
+	for ( ; i < PixInSquare; ++i )
 		hash |= ( (uint_fast64_t)( (unsigned)( mean.red - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i );
 
-	img * imagest = malloc(sizeof(img));
+	imagest = malloc(sizeof(img));
 	imagest->path = str;
 	imagest->hash = hash;
 	S_I_add_to_list(imagest);
 
-	DestroyImage(resize_image);
+	DestroyImage(resized_image);
 
 	S_I_check_onexit:
 	DestroyImageInfo(image_info);
@@ -139,10 +145,12 @@ S_I_check ( string * instr )
 void
 I_stats ( void )
 {
-	fprintf( stderr, "Images processed successfully: %zu\n", List.length );
-
 	img * iter = List.head;
-	for ( size_t i = 0; i < List.length; ++i )
+	size_t i = 0;
+
+	fprintf( stderr, "Images processed successfully: %lu\n", List.length );
+
+	for ( ; i < List.length; ++i )
 	{
 		fprintf( stderr, "%s: %" PRIxFAST64 "\n", iter->path->s, iter->hash );
 		iter = iter->next;
@@ -152,7 +160,8 @@ I_stats ( void )
 void
 I_finish ( void )
 {
-	for ( size_t i = 0; i < List.length; ++i )
+	size_t i = 0;
+	for ( ; i < List.length; ++i )
 	{
 		img * next = List.head->next;
 		free_string(List.head->path);
@@ -165,10 +174,13 @@ void
 I_compare_all ( void )
 {
 	img * currenthead = List.head;
-	for ( size_t i = 0; i + 1 < List.length; ++i )
+	size_t i = 0;
+	size_t j = i + 1;
+
+	for ( ; i + 1 < List.length; ++i )
 	{
 		img * currenttail = currenthead->next;
-		for ( size_t j = i + 1; j < List.length; ++j )
+		for ( j = i + 1; j < List.length; ++j )
 		{
 			S_I_compare( currenthead, currenttail );
 			currenttail = currenttail->next;

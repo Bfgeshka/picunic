@@ -19,7 +19,7 @@ typedef struct img
 
 typedef struct imagelist
 {
-	size_t length;
+	unsigned long length;
 	img * head;
 	img * tail;
 } imagelist;

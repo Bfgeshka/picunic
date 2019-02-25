@@ -24,7 +24,6 @@ S_F_get_if_image ( string * path )
 	{
 		case 0:
 		{
-//			fprintf( stderr, "Match: %s\n", path );
 			I_process(path);
 			return 1;
 		}
@@ -43,49 +42,51 @@ S_F_get_if_image ( string * path )
 static void
 S_F_load_path ( char * path )
 {
-		fprintf( stderr, "Loading contents of %s...\n", path );
+	DIR * curdir;
+	size_t dirsize = 0;
+	struct dirent * entry = NULL;
+	string * str = construct_string(4096);
 
-		DIR * curdir = opendir(path);
-		if ( curdir == NULL )
-		{
-			fprintf( stderr, "Cannot open %s, skipping...\n", path );
-			return;
-		}
+	fprintf( stderr, "Loading contents of %s...\n", path );
 
-		size_t dirsize = 0;
-		struct dirent * entry = NULL;
-		string * str = construct_string(4096);
-
-		while ( ( entry = readdir(curdir) ) )
-		{
-			if ( strcmp( entry->d_name, "." ) == 0 || strcmp( entry->d_name, ".." ) == 0 )
-				continue;
-
-			stringset( str, "%s/%s", path, entry->d_name );
-
-			struct stat st;
-			if ( stat( str->s, &st ) == 0 )
-			{
-				if ( S_ISREG(st.st_mode) )
-					dirsize += S_F_get_if_image(str);
-
-				if ( config.recursive && S_ISDIR(st.st_mode) )
-					S_F_load_path(str->s);
-			}
-		}
-
-		fprintf( stderr, "Usable files in %s: %zu\n", path, dirsize );
+	if ( ( curdir = opendir(path) ) == NULL )
+	{
+		fprintf( stderr, "Cannot open %s, skipping...\n", path );
 		free_string(str);
-		closedir(curdir);
+		return;
+	}
+
+	while ( ( entry = readdir(curdir) ) )
+	{
+		struct stat st;
+
+		if ( strcmp( entry->d_name, "." ) == 0 || strcmp( entry->d_name, ".." ) == 0 )
+			continue;
+
+		stringset( str, "%s/%s", path, entry->d_name );
+
+		if ( stat( str->s, &st ) == 0 )
+		{
+			if ( S_ISREG(st.st_mode) )
+				dirsize += S_F_get_if_image(str);
+			if ( config.recursive && S_ISDIR(st.st_mode) )
+				S_F_load_path(str->s);
+		}
+	}
+
+	fprintf( stderr, "Usable files in %s: %lu\n", path, dirsize );
+	free_string(str);
+	closedir(curdir);
 }
 
 /* Global scope */
 void
 F_check_path ( char * path )
 {
+	struct stat sb;
+
 	fprintf( stderr, "Checking path %s...\n", path );
 
-	struct stat sb;
 	if ( stat( path, &sb ) != 0 || !S_ISDIR(sb.st_mode) )
 	{
 		fputs( "Invalid path.\n", stderr );
@@ -114,6 +115,7 @@ F_finish ( void )
 void
 F_load_all_paths ( void )
 {
-	for ( size_t i = 0; i < directories.count; ++i )
+	size_t i = 0;
+	for ( ; i < directories.count; ++i )
 		S_F_load_path(directories.value[i]);
 }

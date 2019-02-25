@@ -27,14 +27,15 @@ A_help ( void )
 void
 A_args ( int argc, char ** argv )
 {
-	if ( argc == 1 )
-		goto A_args_show_help;
-
+	int i = 1;
 	config.precision = DEFAULT_PRECISION;
 	config.avghash_side = DEFAULT_AVGHASH_SIDE;
 	directories.count = 0;
 
-	for ( int i = 1; i < argc; ++i )
+	if ( argc == 1 )
+		goto A_args_show_help;
+
+	for ( ; i < argc; ++i )
 	{
 		if ( argv[i][0] != '-' )
 			continue;
@@ -49,10 +50,12 @@ A_args ( int argc, char ** argv )
 
 			case 'p':
 			{
+				float tmp;
+
 				if ( i + 1 == argc )
 					goto A_args_invalid_argument;
 
-				float tmp = atof(argv[i + 1]);
+				tmp = atof(argv[i + 1]);
 				if ( tmp <= 0.0f || tmp >= 1.0f )
 					goto A_args_invalid_argument;
 
@@ -76,10 +79,11 @@ A_args ( int argc, char ** argv )
 
 	if ( directories.count > 0 )
 	{
-		directories.value = malloc( sizeof(char *) * directories.count );
 		int pathindex = 0;
+		int i = 1;
+		directories.value = malloc( sizeof(char *) * directories.count );
 
-		for ( int i = 1; i < argc; ++i )
+		for ( ; i < argc; ++i )
 		{
 			if ( argv[i][0] == '-' && argv[i][1] == 'T' )
 			{
@@ -101,7 +105,7 @@ A_args ( int argc, char ** argv )
 		directories.value[0] = argv[argc - 1];
 	}
 
-	fprintf( stderr, "paths: %zu\nrecursive: %d\nprecision: %f\n", directories.count, config.recursive, config.precision );
+	fprintf( stderr, "paths: %lu\nrecursive: %d\nprecision: %f\n", directories.count, config.recursive, config.precision );
 	return;
 
 	A_args_invalid_argument:

@@ -7,7 +7,7 @@
 /* Typedef */
 struct directories
 {
-	size_t count;
+	unsigned long count;
 	char ** value;
 } directories;
 
