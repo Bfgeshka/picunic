@@ -13,6 +13,7 @@ main ( int argc, char ** argv )
 	F_load_all_paths();
 	I_stats();
 
+	I_finish();
 	F_finish();
 	fputs( "All good, exitting...\n", stderr );
 	return EXIT_SUCCESS;
