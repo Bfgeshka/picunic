@@ -51,9 +51,14 @@ S_I_add_to_list ( img * image )
 static unsigned char
 S_I_compare_color ( PixelPacket mean, PixelPacket compared )
 {
-	int difference = mean.red - compared.red + mean.green - compared.green + mean.blue - compared.blue + mean.opacity - compared.opacity;
-	unsigned short retvalue = ( difference > 0 ) ? 0 : 1;
-	return retvalue;
+//	int difference = mean.red - compared.red + mean.green - compared.green + mean.blue - compared.blue + mean.opacity - compared.opacity;
+//	int difference = mean.red - compared.red;
+//	unsigned short retvalue = ( difference > 0 ) ? 0 : 1;
+//	unsigned short retvalue = (unsigned short)1 ^ ( (unsigned int)difference >> ( sizeof(int) * 8 - 1 ) );
+//	printf( "Comparing with %d %d %d %d, result: %d\n", compared.red, compared.green, compared.blue, compared.opacity, retvalue );
+//	return (unsigned short)1 ^ ( (unsigned int)difference >> ( sizeof(int) * 8 - 1 ) );
+//	return ( (unsigned int)difference >> ( sizeof(int) * 8 - 1 ) );
+	return (unsigned int)( mean.red - compared.red ) >> ( sizeof(int) * 8 - 1 );
 }
 
 static PixelPacket
@@ -126,12 +131,14 @@ S_I_check ( char * path )
 
 	PixelPacket * pixels = GetImagePixels( resize_image, 0, 0, config.avghash_side, config.avghash_side );
 	PixelPacket mean = S_I_get_mean(pixels);
+//	fprintf( stderr, "Mean value: (%d %d %d %d)\n", mean.red, mean.green, mean.blue, mean.opacity );
 
 	uint_fast64_t hash = 0;
 
 	for ( unsigned short i = 0; i < PixInSquare; ++i )
 		hash |= ( (uint_fast64_t)S_I_compare_color( mean, pixels[i] ) << i );
 
+//	S_I_binary_number(hash);
 //	fprintf( stderr, "Image hash: %" PRIxFAST64 "\n", hash );
 
 	img * imagest = malloc(sizeof(img));
