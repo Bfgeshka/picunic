@@ -14,12 +14,12 @@
 regex_t Image_regex;
 
 static void S_F_load_path ( char * path );
-static int S_F_get_if_image ( char * path );
+static int S_F_get_if_image ( string * path );
 
 static int
-S_F_get_if_image ( char * path )
+S_F_get_if_image ( string * path )
 {
-	int err_ret = regexec( &Image_regex, path, 0, NULL, 0 );
+	int err_ret = regexec( &Image_regex, path->s, 0, NULL, 0 );
 	switch ( err_ret )
 	{
 		case 0:
@@ -38,7 +38,6 @@ S_F_get_if_image ( char * path )
 			return 0;
 		}
 	}
-
 }
 
 static void
@@ -68,7 +67,7 @@ S_F_load_path ( char * path )
 			if ( stat( str->s, &st ) == 0 )
 			{
 				if ( S_ISREG(st.st_mode) )
-					dirsize += S_F_get_if_image(str->s);
+					dirsize += S_F_get_if_image(str);
 
 				if ( config.recursive && S_ISDIR(st.st_mode) )
 					S_F_load_path(str->s);
