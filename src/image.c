@@ -9,20 +9,6 @@
 static void S_I_check ( char * path );
 static PixelPacket S_I_get_mean ( PixelPacket * pixels );
 static unsigned char S_I_compare_color ( PixelPacket mean, PixelPacket compared );
-static void S_I_binary_number ( uint_fast64_t );
-
-static void
-S_I_binary_number ( uint_fast64_t hash )
-{
-	printf( "%" PRIxFAST64 ": ", hash );
-	while (hash)
-	{
-		printf( "%" PRIxFAST64, ( hash & 1 ) );
-		hash >>= 1;
-	}
-	printf("\n");
-}
-
 
 static unsigned char
 S_I_compare_color ( PixelPacket mean, PixelPacket compared )
@@ -104,20 +90,12 @@ S_I_check ( char * path )
 
 	PixelPacket * pixels = GetImagePixels( resize_image, 0, 0, config.avghash_side, config.avghash_side );
 	PixelPacket mean = S_I_get_mean(pixels);
-	fprintf( stderr, "Mean value: (%d %d %d %d)\n", mean.red, mean.green, mean.blue, mean.opacity );
 
 	uint_fast64_t hash = 0;
-	S_I_binary_number(hash);
 
 	unsigned short square = config.avghash_side * config.avghash_side;
 	for ( unsigned short i = 0; i < square; ++i )
-	{
-//		printf( "%ud ", i );
-//		hash |= ( S_I_compare_color( mean, pixels[i] ) << i );
-		if ( S_I_compare_color( mean, pixels[i] ) != 0 )
-			hash |= ( (uint_fast64_t)1 << ( 63 - i ) );
-//		S_I_binary_number(hash);
-	}
+		hash |= ( (uint_fast64_t)S_I_compare_color( mean, pixels[i] ) << i );
 
 	fprintf( stderr, "Image hash: %" PRIxFAST64 "\n", hash );
 
