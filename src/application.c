@@ -84,7 +84,6 @@ A_args ( int argc, char ** argv )
 		directories.value = malloc( sizeof(char *) * directories.count );
 
 		for ( ; u < argc; ++u )
-		{
 			if ( argv[u][0] == '-' && argv[u][1] == 'T' )
 			{
 				if ( u + 1 == argc )
@@ -94,7 +93,6 @@ A_args ( int argc, char ** argv )
 				directories.value[pathindex] = argv[u + 1];
 				pathindex++;
 			}
-		}
 	}
 	else
 	{
