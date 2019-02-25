@@ -9,7 +9,7 @@
 static imagelist List;
 
 static void S_I_check ( string * path );
-static PixelPacket S_I_get_mean ( PixelPacket * pixels );
+static unsigned long S_I_get_mean ( PixelPacket * pixels );
 static void S_I_add_to_list ( img * image );
 static void S_I_compare ( img * img1, img * img2 );
 static void S_I_hash_from_thumb ( Image * image, string * str );
@@ -19,7 +19,7 @@ S_I_hash_from_thumb ( Image * image, string * str )
 {
 	unsigned short i = 0;
 	PixelPacket * pixels;
-	PixelPacket mean;
+	unsigned long mean;
 
 	img * imagest;
 	imagest = malloc(sizeof(img));
@@ -30,7 +30,7 @@ S_I_hash_from_thumb ( Image * image, string * str )
 	mean = S_I_get_mean(pixels);
 
 	for ( ; i < config.square; ++i )
-		imagest->hash |= (uint_fast64_t)( (unsigned)( mean.red - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i;
+		imagest->hash |= (uint_fast64_t)( (unsigned)( mean - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i;
 
 	S_I_add_to_list(imagest);
 }
@@ -68,30 +68,16 @@ S_I_add_to_list ( img * image )
 	List.length++;
 }
 
-static PixelPacket
+static unsigned long
 S_I_get_mean ( PixelPacket * pixels )
 {
-	PixelPacket pp;
 	unsigned long colr = 0;
-	unsigned long colg = 0;
-	unsigned long colb = 0;
-	unsigned long cola = 0;
 
 	unsigned long i = 0;
 	for ( ; i < config.square; ++i )
-	{
 		colr += pixels[i].red;
-		colg += pixels[i].green;
-		colb += pixels[i].blue;
-		cola += pixels[i].opacity;
-	}
 
-	pp.red = colr / config.square;
-	pp.green = colg / config.square;
-	pp.blue = colb / config.square;
-	pp.opacity = cola / config.square;
-
-	return pp;
+	return colr / config.square;
 }
 
 static void
