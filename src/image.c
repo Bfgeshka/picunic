@@ -121,7 +121,7 @@ I_process ( string * instr )
 	GetExceptionInfo(&ex);
 
 	image_info = CloneImageInfo((ImageInfo *)NULL);
-	strcpy( image_info->filename, str->s );
+	snprintf( image_info->filename, str->length + 1, "%s", str->s );
 
 	{
 		Image * image = ReadImage( image_info, &ex );
