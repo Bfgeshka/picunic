@@ -4,13 +4,30 @@
 #include "stringutils.h"
 #include <magick/api.h>
 #include <string.h>
-#include <stdint.h>
-#include <inttypes.h>
 
 /* Local scope */
+static imagelist List;
+
 static void S_I_check ( char * path );
 static PixelPacket S_I_get_mean ( PixelPacket * pixels );
 static unsigned char S_I_compare_color ( PixelPacket mean, PixelPacket compared );
+static void S_I_add_to_list ( img * image );
+
+static void
+S_I_add_to_list ( img * image )
+{
+	if ( List.length == 0 )
+	{
+		List.length++;
+		List.head = image;
+		List.tail = image;
+		return;
+	}
+
+	List.tail->next = image;
+	List.tail = image;
+	List.length++;
+}
 
 static unsigned char
 S_I_compare_color ( PixelPacket mean, PixelPacket compared )
@@ -61,10 +78,10 @@ S_I_check ( char * path )
 
 	(void)strcpy( image_info->filename, str->s );
 
-	fprintf( stderr, "Reading %s ...", image_info->filename );
+//	fprintf( stderr, "Reading %s ...", image_info->filename );
 	Image * image = ReadImage( image_info, &ex );
 
-	fprintf( stderr, " %lu frames\n", GetImageListLength(image) );
+//	fprintf( stderr, " %lu frames\n", GetImageListLength(image) );
 	if ( ex.severity != UndefinedException )
 		CatchException(&ex);
 
@@ -95,7 +112,12 @@ S_I_check ( char * path )
 	for ( unsigned short i = 0; i < square; ++i )
 		hash |= ( (uint_fast64_t)S_I_compare_color( mean, pixels[i] ) << i );
 
-	fprintf( stderr, "Image hash: %" PRIxFAST64 "\n", hash );
+//	fprintf( stderr, "Image hash: %" PRIxFAST64 "\n", hash );
+
+	img * imagest = malloc(sizeof(img));
+	imagest->path = path;
+	imagest->hash = hash;
+	S_I_add_to_list(imagest);
 
 	DestroyImage(resize_image);
 
@@ -107,6 +129,12 @@ S_I_check ( char * path )
 }
 
 /* Global scope */
+void
+I_stats ( void )
+{
+	fprintf( stderr, "Images processed successfully: %zu\n", List.length );
+}
+
 void
 I_process ( char * path )
 {
