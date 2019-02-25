@@ -13,6 +13,8 @@ calclen ( string * str )
 	size_t i = 0;
 	for ( ; str->s[i] != '\0'; ++i )
 		str->length = i;
+
+	str->length++;
 }
 
 /* Global scope */
@@ -32,7 +34,7 @@ stringcopy ( string * instr )
 	str->length = instr->length;
 	str->bytes = instr->length;
 	str->s = malloc(instr->length);
-	strcpy( str->s, instr->s );
+	snprintf( str->s, str->length + 1, "%s", instr->s );
 
 	return str;
 }
