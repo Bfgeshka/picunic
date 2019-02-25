@@ -5,7 +5,7 @@ SRC = src/picuni.c src/application.c src/files.c src/image.c src/stringutils.c
 NAME = picunic
 PREFIX = /usr/local
 
-CFLAGS = -O2 -g -Wall -Wextra -Wpedantic --std=c99 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE
+CFLAGS = -O2 -g -Wall -Wextra -Wpedantic --std=c89 -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE
 LDFLAGS = -lGraphicsMagick
 INCLUDE := -I./include $(shell GraphicsMagick-config --cppflags)
 
