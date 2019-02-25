@@ -48,6 +48,9 @@ S_I_compare ( img * img1, img * img2 )
 		similarity_hash &= similarity_hash - 1;
 	}
 
+	if ( similar_bits / (float)config.square >= config.precision )
+		fprintf( stderr, "%s", " HIT! " );
+
 	fprintf( stderr, " similar: %u / %u\n", similar_bits, config.square );
 }
 
