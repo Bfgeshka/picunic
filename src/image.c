@@ -131,8 +131,6 @@ I_process ( string * instr )
 
 		if ( !image )
 		{
-			fputs( "Null image data.\n", stderr );
-
 			free_string(str);
 			goto S_I_check_onexit;
 		}
