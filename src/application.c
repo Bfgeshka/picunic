@@ -30,6 +30,7 @@ A_args ( int argc, char ** argv )
 	int i = 1;
 	config.precision = DEFAULT_PRECISION;
 	config.avghash_side = DEFAULT_AVGHASH_SIDE;
+	config.square = config.avghash_side * config.avghash_side;
 	directories.count = 0;
 
 	if ( argc == 1 )
