@@ -133,7 +133,6 @@ I_process ( string * instr )
 {
 	ExceptionInfo ex;
 	ImageInfo * image_info;
-	Image * image;
 	Image * resized_image;
 
 	string * str = stringcopy(instr);
@@ -144,21 +143,23 @@ I_process ( string * instr )
 	image_info = CloneImageInfo((ImageInfo *)NULL);
 	strcpy( image_info->filename, str->s );
 
-	image = ReadImage( image_info, &ex );
-
-	if ( ex.severity != UndefinedException )
-		CatchException(&ex);
-
-	if ( !image )
 	{
-		fputs( "Null image data.\n", stderr );
+		Image * image = ReadImage( image_info, &ex );
 
-		free_string(str);
-		goto S_I_check_onexit;
+		if ( ex.severity != UndefinedException )
+			CatchException(&ex);
+
+		if ( !image )
+		{
+			fputs( "Null image data.\n", stderr );
+
+			free_string(str);
+			goto S_I_check_onexit;
+		}
+
+		resized_image = ResizeImage( image, config.avghash_side, config.avghash_side, LanczosFilter, 1.0 ,&ex );
+		DestroyImage(image);
 	}
-
-	resized_image = ResizeImage( image, config.avghash_side, config.avghash_side, LanczosFilter, 1.0 ,&ex );
-	DestroyImage(image);
 
 	if ( resized_image == (Image *)NULL )
 	{
