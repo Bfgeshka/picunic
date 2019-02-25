@@ -14,9 +14,9 @@
 regex_t Image_regex;
 
 static void S_F_load_path ( char * path );
-static int S_F_get_if_image ( string * path );
+static unsigned S_F_get_if_image ( string * path );
 
-static int
+static unsigned
 S_F_get_if_image ( string * path )
 {
 	int err_ret = regexec( &Image_regex, path->s, 0, NULL, 0 );
@@ -43,7 +43,7 @@ static void
 S_F_load_path ( char * path )
 {
 	DIR * curdir;
-	size_t dirsize = 0;
+	unsigned long dirsize = 0;
 	struct dirent * entry = NULL;
 	string * str = construct_string(4096);
 
