@@ -26,5 +26,6 @@ typedef struct imagelist
 /* Protos */
 void I_process ( char * path );
 void I_stats ( void );
+void I_finish ( void );
 
 #endif
