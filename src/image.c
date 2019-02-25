@@ -1,5 +1,6 @@
 /* Macros */
 #include "image.h"
+#include "imagelist.h"
 #include "config.h"
 #include "stringutils.h"
 #include <magick/api.h>
@@ -9,7 +10,6 @@
 static imagelist List;
 
 static unsigned long S_I_get_mean ( PixelPacket * pixels );
-static void S_I_add_to_list ( img * image );
 static void S_I_compare ( img * img1, img * img2 );
 static void S_I_hash_from_thumb ( Image * image, string * str );
 
@@ -31,7 +31,7 @@ S_I_hash_from_thumb ( Image * image, string * str )
 	for ( ; i < config.square; ++i )
 		imagest->hash |= (uint_fast64_t)( (unsigned)( mean - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i;
 
-	S_I_add_to_list(imagest);
+	IL_add_to_imagelist( &List, imagest );
 }
 
 static void
@@ -52,22 +52,6 @@ S_I_compare ( img * img1, img * img2 )
 		fprintf( stderr, "%s", " HIT! " );
 
 	fprintf( stderr, " similar: %u / %u\n", similar_bits, config.square );
-}
-
-static void
-S_I_add_to_list ( img * image )
-{
-	if ( List.length == 0 )
-	{
-		List.length++;
-		List.head = image;
-		List.tail = image;
-		return;
-	}
-
-	List.tail->next = image;
-	List.tail = image;
-	List.length++;
 }
 
 static unsigned long
@@ -101,14 +85,7 @@ I_stats ( void )
 void
 I_finish ( void )
 {
-	size_t i = 0;
-	for ( ; i < List.length; ++i )
-	{
-		img * next = List.head->next;
-		free_string(List.head->path);
-		free(List.head);
-		List.head = next;
-	}
+	IL_free_imagelist(&List);
 }
 
 void
