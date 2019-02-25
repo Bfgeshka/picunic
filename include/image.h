@@ -24,6 +24,19 @@ typedef struct imagelist
 	img * tail;
 } imagelist;
 
+typedef struct simgroup
+{
+	uint_fast64_t grouphash;
+	imagelist list;
+} simgroup;
+
+typedef struct simgrouplist
+{
+	unsigned long length;
+	simgroup * head;
+	simgroup * tail;
+} simgrouplist;
+
 /* Protos */
 void I_process ( string * path );
 void I_stats ( void );
