@@ -3,20 +3,38 @@
 #include "stringutils.h"
 #include <magick/api.h>
 #include <string.h>
+#include <stdint.h>
+#include <inttypes.h>
 
 static void S_I_check ( char * path );
 static PixelPacket S_I_get_mean ( PixelPacket * pixels );
 static unsigned char S_I_compare_color ( PixelPacket mean, PixelPacket compared );
+static void S_I_binary_number ( uint_fast64_t );
 
-static unsigned char S_I_compare_color ( PixelPacket mean, PixelPacket compared )
+static void
+S_I_binary_number ( uint_fast64_t hash )
+{
+	printf( "%" PRIxFAST64 ": ", hash );
+	while (hash)
+	{
+		printf( "%" PRIxFAST64, ( hash & 1 ) );
+		hash >>= 1;
+	}
+	printf("\n");
+}
+
+
+static unsigned char
+S_I_compare_color ( PixelPacket mean, PixelPacket compared )
 {
 	int difference = mean.red - compared.red + mean.green - compared.green + mean.blue - compared.blue + mean.opacity - compared.opacity;
 	unsigned short retvalue = ( difference > 0 ) ? 0 : 1;
-	printf( "Comparing with %d %d %d %d, result: %d\n", compared.red, compared.green, compared.blue, compared.opacity, retvalue );
+//	printf( "Comparing with %d %d %d %d, result: %d\n", compared.red, compared.green, compared.blue, compared.opacity, retvalue );
 	return retvalue;
 }
 
-static PixelPacket S_I_get_mean ( PixelPacket * pixels )
+static PixelPacket
+S_I_get_mean ( PixelPacket * pixels )
 {
 //	fprintf( stderr, "Calculating mean color from %lu values...\n", colnumb );
 //	fprintf( stderr, "Max value: %d\n", MaxRGB );
@@ -88,26 +106,20 @@ S_I_check ( char * path )
 	PixelPacket mean = S_I_get_mean(pixels);
 	fprintf( stderr, "Mean value: (%d %d %d %d)\n", mean.red, mean.green, mean.blue, mean.opacity );
 
-	unsigned long long hash = 0;
+	uint_fast64_t hash = 0;
+	S_I_binary_number(hash);
 
-	for ( unsigned short u = 0, i = 0; u < config.avghash_side; ++u )
-		for ( unsigned short v = 0; v < config.avghash_side; ++v, ++i )
-		{
-			printf("%ud ", i);
-			hash |= ( S_I_compare_color( mean, pixels[i] ) << i );
-//			if ( S_I_compare_color( mean, pixels[i] ) != 0 )
-//				hash |= ( 1 << i );
-		}
-
-	unsigned long long hashcp = hash;
-	while (hashcp)
+	unsigned short square = config.avghash_side * config.avghash_side;
+	for ( unsigned short i = 0; i < square; ++i )
 	{
-		printf("%llu", (hashcp & 1));
-		hashcp >>= 1;
+//		printf( "%ud ", i );
+//		hash |= ( S_I_compare_color( mean, pixels[i] ) << i );
+		if ( S_I_compare_color( mean, pixels[i] ) != 0 )
+			hash |= ( (uint_fast64_t)1 << ( 63 - i ) );
+//		S_I_binary_number(hash);
 	}
-	printf("\n");
 
-	fprintf( stderr, "Image hash: %llx\n", hash );
+	fprintf( stderr, "Image hash: %" PRIxFAST64 "\n", hash );
 
 	DestroyImage(resize_image);
 
