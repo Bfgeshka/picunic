@@ -80,18 +80,18 @@ A_args ( int argc, char ** argv )
 	if ( directories.count > 0 )
 	{
 		int pathindex = 0;
-		int i = 1;
+		int u = 1;
 		directories.value = malloc( sizeof(char *) * directories.count );
 
-		for ( ; i < argc; ++i )
+		for ( ; u < argc; ++u )
 		{
-			if ( argv[i][0] == '-' && argv[i][1] == 'T' )
+			if ( argv[u][0] == '-' && argv[u][1] == 'T' )
 			{
-				if ( i + 1 == argc )
+				if ( u + 1 == argc )
 					goto A_args_invalid_argument;
 
-				F_check_path(argv[i + 1]);
-				directories.value[pathindex] = argv[i + 1];
+				F_check_path(argv[u + 1]);
+				directories.value[pathindex] = argv[u + 1];
 				pathindex++;
 			}
 		}
