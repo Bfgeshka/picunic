@@ -7,11 +7,30 @@
 
 /* Local scope */
 static imagelist List;
+static unsigned short PixInSquare;
 
 static void S_I_check ( char * path );
 static PixelPacket S_I_get_mean ( PixelPacket * pixels );
 static unsigned char S_I_compare_color ( PixelPacket mean, PixelPacket compared );
 static void S_I_add_to_list ( img * image );
+static void S_I_compare ( img * img1, img * img2 );
+
+static void
+S_I_compare ( img * img1, img * img2 )
+{
+	fprintf( stderr, "Comparing %" PRIxFAST64 " with %" PRIxFAST64 "... ", img1->hash, img2->hash );
+
+	unsigned short similar_bits = PixInSquare;
+
+	uint_fast64_t similarity_hash = img1->hash ^ img2->hash;
+	while ( similarity_hash != 0 )
+	{
+		similar_bits--;
+		similarity_hash &= similarity_hash - 1;
+	}
+
+	fprintf( stderr, " similar: %hu / %hu\n", similar_bits, PixInSquare );
+}
 
 static void
 S_I_add_to_list ( img * image )
@@ -78,10 +97,8 @@ S_I_check ( char * path )
 
 	(void)strcpy( image_info->filename, str->s );
 
-//	fprintf( stderr, "Reading %s ...", image_info->filename );
 	Image * image = ReadImage( image_info, &ex );
 
-//	fprintf( stderr, " %lu frames\n", GetImageListLength(image) );
 	if ( ex.severity != UndefinedException )
 		CatchException(&ex);
 
@@ -112,8 +129,7 @@ S_I_check ( char * path )
 
 	uint_fast64_t hash = 0;
 
-	unsigned short square = config.avghash_side * config.avghash_side;
-	for ( unsigned short i = 0; i < square; ++i )
+	for ( unsigned short i = 0; i < PixInSquare; ++i )
 		hash |= ( (uint_fast64_t)S_I_compare_color( mean, pixels[i] ) << i );
 
 //	fprintf( stderr, "Image hash: %" PRIxFAST64 "\n", hash );
@@ -126,7 +142,6 @@ S_I_check ( char * path )
 	DestroyImage(resize_image);
 
 	S_I_check_onexit:
-//	free_string(str);
 	DestroyImageInfo(image_info);
 	DestroyExceptionInfo(&ex);
 	DestroyMagick();
@@ -156,6 +171,29 @@ I_finish ( void )
 		free(List.head);
 		List.head = next;
 	}
+}
+
+void
+I_compare_all ( void )
+{
+	img * currenthead = List.head;
+	for ( size_t i = 0; i + 1 < List.length; ++i )
+	{
+		img * currenttail = currenthead->next;
+		for ( size_t j = i + 1; j < List.length; ++j )
+		{
+			S_I_compare( currenthead, currenttail );
+			currenttail = currenttail->next;
+		}
+
+		currenthead = currenthead->next;
+	}
+}
+
+void
+I_init ( void )
+{
+	PixInSquare = config.avghash_side * config.avghash_side;
 }
 
 void
