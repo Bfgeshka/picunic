@@ -2,6 +2,16 @@
 #include "imagelist.h"
 #include "stringutils.h"
 
+/* Local scope */
+static void S_IL_free_imgdata ( void * data );
+
+static void
+S_IL_free_imgdata ( void * data )
+{
+	free_string(((imgdata *)data)->path);
+	free(data);
+}
+
 /* Global scope */
 void
 IL_add_to_list ( list * ls, void * data )
@@ -33,8 +43,7 @@ IL_free_imagelist ( list * il )
 	for ( ; i + 1 < il->length; ++i )
 	{
 		listel * next = il->head->next;
-		free_string(((imgdata *)(il->head->data))->path);
-		free(il->head->data);
+		S_IL_free_imgdata(il->head->data);
 		free(il->head);
 		il->head = next;
 	}
