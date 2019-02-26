@@ -11,6 +11,7 @@ typedef struct imgdata
 {
 	string * path;
 	uint_fast64_t hash;
+	struct simgroup * group;
 } imgdata;
 
 typedef struct listel
@@ -38,4 +39,6 @@ typedef struct simgroup
 /* Protos */
 void IL_add_to_list ( list * ls, void * data );
 void IL_free_imagelist ( list * il );
+/*void IL_add_to_simgroup ( simgroup * grp,  )*/
+
 #endif
