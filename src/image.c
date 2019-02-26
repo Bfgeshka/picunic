@@ -7,10 +7,11 @@
 #include <string.h>
 
 /* Local scope */
-static imagelist List;
+static list Images;
+static list Simlist;
 
 static unsigned long S_I_get_mean ( PixelPacket * pixels );
-static void S_I_compare ( img * img1, img * img2 );
+static void S_I_compare ( listel * img1, listel * img2 );
 static void S_I_hash_from_thumb ( Image * image, string * str );
 
 static void
@@ -20,27 +21,26 @@ S_I_hash_from_thumb ( Image * image, string * str )
 	PixelPacket * pixels;
 	unsigned long mean;
 
-	img * imagest;
-	imagest = malloc(sizeof(img));
-	imagest->path = str;
-	imagest->hash = 0;
+	imgdata * imdat = malloc(sizeof(imgdata));
+	imdat->path = str;
+	imdat->hash = 0;
 
 	pixels = GetImagePixels( image, 0, 0, config.avghash_side, config.avghash_side );
 	mean = S_I_get_mean(pixels);
 
 	for ( ; i < config.square; ++i )
-		imagest->hash |= (uint_fast64_t)( (unsigned)( mean - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i;
+		imdat->hash |= (uint_fast64_t)( (unsigned)( mean - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i;
 
-	IL_add_to_imagelist( &List, imagest );
+	IL_add_to_list( &Images, imdat );
 }
 
 static void
-S_I_compare ( img * img1, img * img2 )
+S_I_compare ( listel * img1, listel * img2 )
 {
 	unsigned similar_bits = config.square;
-	uint_fast64_t similarity_hash = img1->hash ^ img2->hash;
+	uint_fast64_t similarity_hash = ((imgdata *)(img1->data))->hash ^ ((imgdata *)(img2->data))->hash;
 
-	fprintf( stderr, "Comparing %" PRIxFAST64 " with %" PRIxFAST64 "... ", img1->hash, img2->hash );
+	fprintf( stderr, "Comparing %" PRIxFAST64 " with %" PRIxFAST64 "... ", ((imgdata *)(img1->data))->hash, ((imgdata *)(img2->data))->hash );
 
 	while ( similarity_hash != 0 )
 	{
@@ -68,37 +68,22 @@ S_I_get_mean ( PixelPacket * pixels )
 
 /* Global scope */
 void
-I_stats ( void )
-{
-	img * iter = List.head;
-	size_t i = 0;
-
-	fprintf( stderr, "Images processed successfully: %lu\n", List.length );
-
-	for ( ; i < List.length; ++i )
-	{
-		fprintf( stderr, "%s: %" PRIxFAST64 "\n", iter->path->s, iter->hash );
-		iter = iter->next;
-	}
-}
-
-void
 I_finish ( void )
 {
-	IL_free_imagelist(&List);
+	IL_free_imagelist(&Images);
 }
 
 void
 I_compare_all ( void )
 {
-	img * currenthead = List.head;
+	listel * currenthead = Images.head;
 	size_t i = 0;
 	size_t j = i + 1;
 
-	for ( ; i + 1 < List.length; ++i )
+	for ( ; i + 1 < Images.length; ++i )
 	{
-		img * currenttail = currenthead->next;
-		for ( j = i + 1; j < List.length; ++j )
+		listel * currenttail = currenthead->next;
+		for ( j = i + 1; j < Images.length; ++j )
 		{
 			S_I_compare( currenthead, currenttail );
 			currenttail = currenttail->next;
