@@ -30,7 +30,7 @@ S_I_hash_from_thumb ( Image * image, string * str )
 	mean = S_I_get_mean(pixels);
 
 	for ( ; i < config.square; ++i )
-		imdat->hash |= (uint_fast64_t)( (unsigned)( mean - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i;
+		imdat->hash |= (HASHTYPE)( (unsigned)( mean - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i;
 
 	IL_add_to_list( &Images, imdat );
 }
@@ -41,10 +41,10 @@ S_I_compare ( listel * img1, listel * img2 )
 	unsigned similar_bits = config.square;
 	imgdata * im1 = (imgdata *)(img1->data);
 	imgdata * im2 = (imgdata *)(img2->data);
-	uint_fast64_t hash1 = ( im1->group == NULL ) ? im1->hash : im1->group->grhash;
-	uint_fast64_t hash2 = ( im2->group == NULL ) ? im2->hash : im2->group->grhash;
+	HASHTYPE hash1 = ( im1->group == NULL ) ? im1->hash : im1->group->grhash;
+	HASHTYPE hash2 = ( im2->group == NULL ) ? im2->hash : im2->group->grhash;
 
-	uint_fast64_t similarity_hash = hash1 ^ hash2;
+	HASHTYPE similarity_hash = hash1 ^ hash2;
 
 	if ( im1->group != NULL && im2->group != NULL )
 	{

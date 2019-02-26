@@ -5,12 +5,13 @@
 #include "stringutils.h"
 #include <stdint.h>
 #include <inttypes.h>
+#define HASHTYPE uint_fast64_t
 
 /* Typedef */
 typedef struct imgdata
 {
 	string * path;
-	uint_fast64_t hash;
+	HASHTYPE hash;
 	struct simgroup * group;
 } imgdata;
 
@@ -32,7 +33,7 @@ typedef struct list
 
 typedef struct simgroup
 {
-	uint_fast64_t grhash;
+	HASHTYPE grhash;
 	list images;
 } simgroup;
 
