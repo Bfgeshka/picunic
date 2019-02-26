@@ -122,7 +122,7 @@ A_args ( int argc, char ** argv )
 		directories.value[0] = argv[argc - 1];
 	}
 
-	fprintf( stderr, "paths: %lu\nrecursive: %d\nprecision: %f\n", directories.count, config.recursive, config.precision );
+	fprintf( stderr, "paths: %lu\nrecursive: %us\nprecision: %f\n", directories.count, config.recursive, config.precision );
 	return;
 
 	A_args_invalid_argument:
