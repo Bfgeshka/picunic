@@ -11,7 +11,6 @@ main ( int argc, char ** argv )
 	F_cook_regexp();
 
 	F_load_all_paths();
-	I_stats();
 	I_compare_all();
 
 	I_finish();
