@@ -46,21 +46,13 @@ S_I_compare ( listel * img1, listel * img2 )
 	HASHTYPE similarity_hash = hash1 ^ hash2;
 
 	if ( im1->group != NULL && im2->group != NULL )
-	{
-		fprintf( stderr, "Images %" PRIxFAST64 " and %" PRIxFAST64 " both are in groups already, skipping!\n", hash1, hash2 );
-		if ( im1->group == im2->group )
-			fputs( "They are even in the same group!\n", stderr );
 		return;
-	}
-
-	fprintf( stderr, "Comparing %" PRIxFAST64 " with %" PRIxFAST64 "... ", hash1, hash2 );
 
 	while ( similarity_hash != 0 )
 	{
 		similar_bits--;
 		similarity_hash &= similarity_hash - 1;
 	}
-	fprintf( stderr, " similar: %u / %u\n", similar_bits, config.square );
 
 	if ( similar_bits / (float)config.square >= config.precision )
 	{
@@ -74,21 +66,14 @@ S_I_compare ( listel * img1, listel * img2 )
 
 			IL_add_to_simgroup( grp, im1 );
 			IL_add_to_simgroup( grp, im2 );
-			fputs( "New group!\n", stderr );
 			IL_add_to_list( &Simlist, (void *)grp );
 		}
 		else
 		{
 			if ( im1->group == NULL )
-			{
-				fputs( "Adding to im2 group...\n", stderr );
 				IL_add_to_simgroup( im2->group, im1 );
-			}
 			else
-			{
-				fputs( "Adding to im1 group...\n", stderr );
 				IL_add_to_simgroup( im1->group, im2 );
-			}
 		}
 	}
 }
