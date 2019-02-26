@@ -12,6 +12,7 @@ main ( int argc, char ** argv )
 
 	F_load_all_paths();
 	I_compare_all();
+	I_result();
 
 	I_finish();
 	F_finish();
