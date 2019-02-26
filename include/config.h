@@ -4,10 +4,12 @@
 /* Typedef */
 struct config
 {
-	int recursive;
+	char * cmdline;
+	float precision;
 	unsigned avghash_side;
 	unsigned square;
-	float precision;
+	unsigned recursive : 1;
+	unsigned customcmd : 1;
 } config;
 
 #endif
