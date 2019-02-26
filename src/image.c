@@ -24,6 +24,7 @@ S_I_hash_from_thumb ( Image * image, string * str )
 	imgdata * imdat = malloc(sizeof(imgdata));
 	imdat->path = str;
 	imdat->hash = 0;
+	imdat->group = NULL;
 
 	pixels = GetImagePixels( image, 0, 0, config.avghash_side, config.avghash_side );
 	mean = S_I_get_mean(pixels);
@@ -38,20 +39,60 @@ static void
 S_I_compare ( listel * img1, listel * img2 )
 {
 	unsigned similar_bits = config.square;
-	uint_fast64_t similarity_hash = ((imgdata *)(img1->data))->hash ^ ((imgdata *)(img2->data))->hash;
+	imgdata * im1 = (imgdata *)(img1->data);
+	imgdata * im2 = (imgdata *)(img2->data);
+	uint_fast64_t hash1 = ( im1->group == NULL ) ? im1->hash : im1->group->grhash;
+	uint_fast64_t hash2 = ( im2->group == NULL ) ? im2->hash : im2->group->grhash;
 
-	fprintf( stderr, "Comparing %" PRIxFAST64 " with %" PRIxFAST64 "... ", ((imgdata *)(img1->data))->hash, ((imgdata *)(img2->data))->hash );
+	uint_fast64_t similarity_hash = hash1 ^ hash2;
+
+	if ( im1->group != NULL && im2->group != NULL )
+	{
+		fprintf( stderr, "Images %" PRIxFAST64 " and %" PRIxFAST64 " both are in groups already, skipping!\n", hash1, hash2 );
+		if ( im1->group == im2->group )
+			fputs( "They are even in the same group!\n", stderr );
+		return;
+	}
+
+	fprintf( stderr, "Comparing %" PRIxFAST64 " with %" PRIxFAST64 "... ", hash1, hash2 );
 
 	while ( similarity_hash != 0 )
 	{
 		similar_bits--;
 		similarity_hash &= similarity_hash - 1;
 	}
+	fprintf( stderr, " similar: %u / %u\n", similar_bits, config.square );
 
 	if ( similar_bits / (float)config.square >= config.precision )
-		fprintf( stderr, "%s", " HIT! " );
+	{
+		if ( im1->group == NULL && im2->group == NULL )
+		{
+			simgroup * grp = malloc(sizeof(grp));
+			grp->grhash = 0;
+			grp->images.length = 0;
+			grp->images.head = NULL;
+			grp->images.tail = NULL;
+			IL_add_to_simgroup( grp, im1 );
+			IL_add_to_simgroup( grp, im2 );
+			fputs( "New group!\n", stderr );
+			IL_add_to_list( &Simlist, (void *)grp );
+		}
+		else
+		{
+			if ( im1->group == NULL )
+			{
+				fputs( "Adding to im2 group...\n", stderr );
+				IL_add_to_simgroup( im2->group, im1 );
+			}
+			else
+			{
+				fputs( "Adding to im1 group...\n", stderr );
+				IL_add_to_simgroup( im1->group, im2 );
+			}
+		}
+	}
 
-	fprintf( stderr, " similar: %u / %u\n", similar_bits, config.square );
+
 }
 
 static unsigned long
