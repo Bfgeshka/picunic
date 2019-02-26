@@ -3,6 +3,7 @@
 #include "imagelist.h"
 #include "config.h"
 #include "stringutils.h"
+#include "application.h"
 #include <magick/api.h>
 #include <string.h>
 
@@ -128,6 +129,7 @@ I_result ( void )
 	{
 		simgroup * curgroup = (simgroup *)currenthead->data;
 		listel * curimg = curgroup->images.head;
+		size_t cmdlinesize = strlen(config.cmdline) + 1;
 
 		fprintf( stderr, "Group %lu/%lu (%" PRIxFAST64 "), %lu images:\n", i + 1, Simlist.length, curgroup->grhash, curgroup->images.length );
 
@@ -136,7 +138,27 @@ I_result ( void )
 			imgdata * img = (imgdata *)curimg->data;
 			fprintf( stderr, "\t%" PRIxFAST64 "\t%s\n", img->hash, img->path->s );
 
+			cmdlinesize += img->path->length + 3;
+
 			curimg = curimg->next;
+		}
+
+		if ( config.customcmd )
+		{
+			string * str = construct_string(cmdlinesize);
+			curimg = curgroup->images.head;
+
+			stringcat( str, "%s ", config.cmdline );
+
+			for ( j = 0; j < curgroup->images.length; ++j )
+			{
+				stringcat( str, "\"%s\" ", ((imgdata *)curimg->data)->path->s );
+				curimg = curimg->next;
+			}
+
+			A_custom_command(str->s);
+
+/* 			free_string(str); TODO: fix this */
 		}
 
 		currenthead = currenthead->next;
