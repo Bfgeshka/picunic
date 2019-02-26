@@ -1,9 +1,6 @@
 #ifndef FILES_H_GUARD_
 #define FILES_H_GUARD_
 
-/* Macros */
-#include <stdlib.h>
-
 /* Typedef */
 struct directories
 {
