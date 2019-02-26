@@ -48,3 +48,11 @@ IL_free_imagelist ( list * il )
 		il->head = next;
 	}
 }
+
+void
+IL_add_to_simgroup ( simgroup * grp, imgdata * im )
+{
+	IL_add_to_list( &(grp->images), (void *)im );
+	im->group = grp;
+	grp->grhash = im->hash;
+}
