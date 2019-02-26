@@ -8,5 +8,6 @@
 void I_process ( string * path );
 void I_finish ( void );
 void I_compare_all( void );
+void I_result ( void );
 
 #endif

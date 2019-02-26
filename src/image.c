@@ -43,7 +43,6 @@ S_I_compare ( listel * img1, listel * img2 )
 	imgdata * im2 = (imgdata *)img2->data;
 	HASHTYPE hash1 = ( im1->group == NULL ) ? im1->hash : im1->group->grhash;
 	HASHTYPE hash2 = ( im2->group == NULL ) ? im2->hash : im2->group->grhash;
-
 	HASHTYPE similarity_hash = hash1 ^ hash2;
 
 	if ( im1->group != NULL && im2->group != NULL )
@@ -117,8 +116,8 @@ void
 I_compare_all ( void )
 {
 	listel * currenthead = Images.head;
-	size_t i = 0;
-	size_t j = i + 1;
+	unsigned long i = 0;
+	unsigned long j = i + 1;
 
 	for ( ; i + 1 < Images.length; ++i )
 	{
@@ -127,6 +126,32 @@ I_compare_all ( void )
 		{
 			S_I_compare( currenthead, currenttail );
 			currenttail = currenttail->next;
+		}
+
+		currenthead = currenthead->next;
+	}
+}
+
+void
+I_result ( void )
+{
+	listel * currenthead = Simlist.head;
+	unsigned long i = 0;
+	unsigned long j = 0;
+
+	for ( ; i < Simlist.length; ++i )
+	{
+		simgroup * curgroup = (simgroup *)currenthead->data;
+		listel * curimg = curgroup->images.head;
+
+		fprintf( stderr, "Group %lu/%lu (%" PRIxFAST64 "), %lu images:\n", i + 1, Simlist.length, curgroup->grhash, curgroup->images.length );
+
+		for ( j = 0; j < curgroup->images.length; ++j )
+		{
+			imgdata * img = (imgdata *)curimg->data;
+			fprintf( stderr, "\t%" PRIxFAST64 "\t%s\n", img->hash, img->path->s );
+
+			curimg = curimg->next;
 		}
 
 		currenthead = currenthead->next;
