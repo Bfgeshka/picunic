@@ -9,6 +9,13 @@
 
 /* Global scope */
 void
+A_custom_command ( char * line )
+{
+	fprintf( stderr, "Calling %s...\n", line );
+	system(line);
+}
+
+void
 A_help ( void )
 {
 	puts("Usage:");
@@ -16,10 +23,11 @@ A_help ( void )
 	puts("    picunic [OPTIONS] -T <PATH> [-T <PATH>]");
 	puts("");
 	puts("Options:");
-	puts("    -R           recursive");
-	puts("    -p <VALUE>   set precision level, between 0 and 1 (not inclusive)");
-	puts("    -h           show this help message");
-	puts("    -T <PATH>    set path");
+	puts("    -R                recursive");
+	puts("    -p <VALUE>        set precision level, between 0 and 1 (not inclusive)");
+	puts("    -h                show this help message");
+	puts("    -T <PATH>         set path");
+	puts("    -c \"COMMANDLINE\"  launch COMMANDLINE for each group of similar images");
 
 	exit(EXIT_SUCCESS);
 }
@@ -31,6 +39,8 @@ A_args ( int argc, char ** argv )
 	config.precision = DEFAULT_PRECISION;
 	config.avghash_side = DEFAULT_AVGHASH_SIDE;
 	config.square = config.avghash_side * config.avghash_side;
+	config.recursive = 0;
+	config.customcmd = 0;
 	directories.count = 0;
 
 	if ( argc == 1 )
@@ -67,6 +77,14 @@ A_args ( int argc, char ** argv )
 			case 'T':
 			{
 				directories.count++;
+				break;
+			}
+
+			case 'c':
+			{
+				config.customcmd = 1;
+				config.cmdline = argv[i + 1];
+
 				break;
 			}
 
