@@ -4,10 +4,10 @@ Searches for similar image files in given paths. Based on a mean hashing.
 
 ## TODO
 - ~~Custom application start for group of similar files~~
-- dHash variant
-- Different backends aside from GraphicsMagick
+- dHash variant (alternative or second pass)
+- Different backends aside from GraphicsMagick (Imagemagick, ccv, libvips etc)
 - Memory sanity
-- Content-aware files reading (i.e. do not rely on file name)
+- Content-aware files reading (i.e. do not rely on file name) via libmagic
 
 ## Requirements
 - POSIX (cygwin will do too)
