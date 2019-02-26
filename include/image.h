@@ -1,5 +1,5 @@
-#ifndef IMAGE_H_
-#define IMAGE_H_
+#ifndef IMAGE_H_GUARD_
+#define IMAGE_H_GUARD_
 
 /* Macros */
 #include "stringutils.h"

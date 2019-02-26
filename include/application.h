@@ -1,5 +1,5 @@
-#ifndef APPLICATION_H_
-#define APPLICATION_H_
+#ifndef APPLICATION_H_GUARD_
+#define APPLICATION_H_GUARD_
 
 /* Protos */
 void A_help ( void );

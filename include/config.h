@@ -1,5 +1,5 @@
-#ifndef CONFIG_H_
-#define CONFIG_H_
+#ifndef CONFIG_H_GUARD_
+#define CONFIG_H_GUARD_
 
 /* Typedef */
 struct config

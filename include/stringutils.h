@@ -1,5 +1,5 @@
-#ifndef STRINGUTILS_H_
-#define STRINGUTILS_H_
+#ifndef STRINGUTILS_H_GUARD_
+#define STRINGUTILS_H_GUARD_
 
 /* Macros */
 #include <stdlib.h>
