@@ -4,6 +4,13 @@
 
 /* Local scope */
 static void S_IL_free_imgdata ( void * data );
+static void S_IL_rehash_simgroup ( simgroup * grp );
+
+static void
+S_IL_rehash_simgroup ( simgroup * grp )
+{
+	grp->grhash = ((imgdata *)grp->images.head->data)->hash;
+}
 
 static void
 S_IL_free_imgdata ( void * data )
@@ -54,5 +61,5 @@ IL_add_to_simgroup ( simgroup * grp, imgdata * im )
 {
 	IL_add_to_list( &(grp->images), (void *)im );
 	im->group = grp;
-	grp->grhash = im->hash;
+	S_IL_rehash_simgroup(grp);
 }
