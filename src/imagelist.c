@@ -1,31 +1,41 @@
+/* Macros */
 #include "imagelist.h"
 #include "stringutils.h"
 
+/* Global scope */
 void
-IL_free_imagelist ( imagelist * il )
+IL_add_to_list ( list * ls, void * data )
 {
-	unsigned long i = 0;
-	for ( ; i < il->length; ++i )
+	listel * el = malloc(sizeof(listel));
+	el->data = data;
+
+	if ( ls->length == 0 )
 	{
-		img * next = il->head->next;
-		free_string(il->head->path);
-		free(il->head);
-		il->head = next;
+		ls->length = 1;
+		ls->head = el;
+		ls->tail = el;
+		return;
+	}
+
+	{
+		listel * curtail = ls->tail;
+		curtail->next = el;
+		el->prev = curtail;
+		ls->tail = el;
+		ls->length++;
 	}
 }
 
 void
-IL_add_to_imagelist ( imagelist * il, img * el )
+IL_free_imagelist ( list * il )
 {
-	if ( il->length == 0 )
+	unsigned long i = 0;
+	for ( ; i + 1 < il->length; ++i )
 	{
-		il->length++;
-		il->head = el;
-		il->tail = el;
-		return;
+		listel * next = il->head->next;
+		free_string(((imgdata *)(il->head->data))->path);
+		free(il->head->data);
+		free(il->head);
+		il->head = next;
 	}
-
-	il->tail->next = el;
-	il->tail = el;
-	il->length++;
 }

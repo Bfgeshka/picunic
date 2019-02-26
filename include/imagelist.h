@@ -7,37 +7,35 @@
 #include <inttypes.h>
 
 /* Typedef */
-typedef struct img
+typedef struct imgdata
 {
 	string * path;
 	uint_fast64_t hash;
+} imgdata;
 
-	struct img * prev;
-	struct img * next;
-} img;
+typedef struct listel
+{
+	void * data;
 
-typedef struct imagelist
+	struct listel * prev;
+	struct listel * next;
+} listel;
+
+typedef struct list
 {
 	unsigned long length;
-	img * head;
-	img * tail;
-} imagelist;
+
+	listel * head;
+	listel * tail;
+} list;
 
 typedef struct simgroup
 {
-	uint_fast64_t grouphash;
-	imagelist list;
+	uint_fast64_t grhash;
+	list * images;
 } simgroup;
 
-typedef struct simgrouplist
-{
-	unsigned long length;
-	simgroup * head;
-	simgroup * tail;
-} simgrouplist;
-
 /* Protos */
-void IL_free_imagelist ( imagelist * il );
-void IL_add_to_imagelist ( imagelist * il, img * el );
-
+void IL_add_to_list ( list * ls, void * data );
+void IL_free_imagelist ( list * il );
 #endif
