@@ -58,7 +58,7 @@ S_I_compare ( listel * img1, listel * img2 )
 	{
 		if ( im1->group == NULL && im2->group == NULL )
 		{
-			simgroup * grp = malloc(sizeof(grp));
+			simgroup * grp = malloc(sizeof(simgroup));
 			grp->grhash = 0;
 			grp->images.length = 0;
 			grp->images.head = NULL;
