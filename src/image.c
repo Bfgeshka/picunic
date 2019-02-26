@@ -39,8 +39,8 @@ static void
 S_I_compare ( listel * img1, listel * img2 )
 {
 	unsigned similar_bits = config.square;
-	imgdata * im1 = (imgdata *)(img1->data);
-	imgdata * im2 = (imgdata *)(img2->data);
+	imgdata * im1 = (imgdata *)img1->data;
+	imgdata * im2 = (imgdata *)img2->data;
 	HASHTYPE hash1 = ( im1->group == NULL ) ? im1->hash : im1->group->grhash;
 	HASHTYPE hash2 = ( im2->group == NULL ) ? im2->hash : im2->group->grhash;
 
@@ -72,6 +72,7 @@ S_I_compare ( listel * img1, listel * img2 )
 			grp->images.length = 0;
 			grp->images.head = NULL;
 			grp->images.tail = NULL;
+
 			IL_add_to_simgroup( grp, im1 );
 			IL_add_to_simgroup( grp, im2 );
 			fputs( "New group!\n", stderr );
@@ -91,8 +92,6 @@ S_I_compare ( listel * img1, listel * img2 )
 			}
 		}
 	}
-
-
 }
 
 static unsigned long
