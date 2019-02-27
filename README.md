@@ -12,7 +12,7 @@ Searches for similar image files in given paths. Based on a mean hashing.
 
 ## Requirements
 - POSIX (cygwin will do too)
-- C89 compiler
+- C compiler
 - GNU Make
 
 - Optional:
