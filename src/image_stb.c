@@ -32,8 +32,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* About */
-/* *
+/* * About * *
+ * Mean hash.
  * Image loading implementation based on stb header-only libraries.
  * More info and more portable libs: https://github.com/nothings/stb
  * */
