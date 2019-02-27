@@ -24,8 +24,7 @@ S_F_get_if_image ( string * path )
 	{
 		case 0:
 		{
-			HP_process(path);
-			return 1;
+			return HP_process(path);
 		}
 		case REG_NOMATCH:
 		{

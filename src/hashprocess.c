@@ -135,18 +135,23 @@ HP_result ( void )
 
 			A_custom_command(str->s);
 
- 			free_string(str);
+			free_string(str);
 		}
 
 		currenthead = currenthead->next;
 	}
 }
 
-void
+int
 HP_process ( string * path )
 {
 	imgdata * img = I_process(path);
 
 	if ( img != NULL )
+	{
 		IL_add_to_list( &Images, img );
+		return 1;
+	}
+
+	return 0;
 }
