@@ -44,6 +44,7 @@
 #include "config.h"
 #include "stringutils.h"
 
+#define STBI_ASSERT(x)
 #define STB_IMAGE_IMPLEMENTATION
 #include "3rdparty/stb_image.h"
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
@@ -99,7 +100,7 @@ I_process ( string * instr )
 	retvalue->hash = 0;
 	retvalue->group = NULL;
 
-	for ( uint i = 0; i < config.square; ++i )
+	for ( unsigned i = 0; i < config.square; ++i )
 		retvalue->hash |= (HASHTYPE)( (unsigned)( mean - resized[i] ) >> ( sizeof(int) * 8 - 1 ) ) << i;
 
 	free(resized);
