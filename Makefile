@@ -5,7 +5,7 @@ SRC = src/picuni.c src/application.c src/files.c src/imagelist.c src/stringutils
 NAME = picunic
 PREFIX = /usr/local
 
-CFLAGS ::= -O2 -s -Wall -Wextra -Wpedantic  -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE
+CFLAGS ::= -O2 -s -Wall -Wextra -Wpedantic  -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE -Wno-unused-function
 LDFLAGS ::=
 INCLUDE ::= -I./include
 
@@ -37,7 +37,7 @@ gm:	SUFFIX = -gm
 gm:	options compile
 
 compile:
-	${CC} ${SRC} ${INCLUDE} ${CFLAGS} ${LDFLAGS} -o ${NAME}${SUFFIX}
+	${CC} ${SRC} ${INCLUDE} ${CFLAGS} ${LDFLAGS} -o ${NAME}
 
 clean:
 	rm -f ${NAME}${SUFFIX}
