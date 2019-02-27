@@ -1,3 +1,8 @@
+/* About */
+/* *
+ * Image loading implementation based on GraphicsMagick C API
+ * */
+
 /* Macros */
 #include "image.h"
 #include "imagelist.h"
@@ -78,21 +83,20 @@ I_process ( string * instr )
 		}
 
 		resized_image = ResizeImage( image, config.avghash_side, config.avghash_side, LanczosFilter, 1.0 ,&ex );
+		if ( resized_image == (Image *)NULL )
+		{
+			fputs( "Failed to resize.\n", stderr );
+			CatchException(&ex);
+
+			free_string(str);
+			goto S_I_check_onexit;
+		}
+
+		GrayscalePseudoClassImage( resized_image, 1 );
+		retvalue = S_I_hash_from_thumb( resized_image, str );
+		DestroyImage(resized_image);
 		DestroyImage(image);
 	}
-
-	if ( resized_image == (Image *)NULL )
-	{
-		fputs( "Failed to resize.\n", stderr );
-		CatchException(&ex);
-
-		free_string(str);
-		goto S_I_check_onexit;
-	}
-
-	GrayscalePseudoClassImage( resized_image, 1 );
-	retvalue = S_I_hash_from_thumb( resized_image, str );
-	DestroyImage(resized_image);
 
 	S_I_check_onexit:
 	DestroyImageInfo(image_info);
