@@ -9,6 +9,7 @@ main ( int argc, char ** argv )
 {
 	A_args( argc, argv );
 	F_cook_regexp();
+	I_init(argv[0]);
 
 	F_load_all_paths();
 	I_compare_all();
