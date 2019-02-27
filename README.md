@@ -9,6 +9,7 @@ Searches for similar image files in given paths. Based on a mean hashing.
 - ~~Different backends aside from GraphicsMagick (Imagemagick, ccv, libvips etc)~~
 - ~~Memory sanity check~~
 - Content-aware files reading (i.e. do not rely on file name) via libmagic
+- Multithreaded parsing
 
 ## Requirements
 - POSIX (cygwin will do too)
