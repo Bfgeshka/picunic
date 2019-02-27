@@ -55,7 +55,7 @@ A_help ( void )
 {
 	puts("Usage:");
 	puts("    picunic [OPTIONS] <PATH>");
-	puts("    picunic [OPTIONS] -T <PATH> [-T <PATH>]");
+	puts("    picunic [OPTIONS] -T <PATH> [-T <PATH>] [OPTIONS]");
 	puts("");
 	puts("Options:");
 	puts("    -R                recursive");
