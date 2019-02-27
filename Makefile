@@ -6,8 +6,8 @@ NAME = picunic
 PREFIX = /usr/local
 
 CFLAGS ::= -O2 -s -Wall -Wextra -Wpedantic  -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE
-LDFLAGS ::= -lGraphicsMagick
-INCLUDE ::= -I./include $(shell GraphicsMagick-config --cppflags)
+LDFLAGS ::=
+INCLUDE ::= -I./include
 
 all: clean gm
 
@@ -23,6 +23,8 @@ stb:	options compile
 
 gm:	CFLAGS += --std=c89
 gm:	SRC += src/image_gm.c
+gm:	INCLUDE +=  $(shell GraphicsMagick-config --cppflags)
+gm:	LDFLAGS += -lGraphicsMagick
 gm:	SUFFIX = -gm
 gm:	options compile
 
