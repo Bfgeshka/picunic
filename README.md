@@ -12,6 +12,8 @@ Searches for similar image files in given paths. Based on a mean hashing.
 
 ## Requirements
 - POSIX (cygwin will do too)
-- GraphicsMagick headers and library
 - C89 compiler
 - GNU Make
+
+- Optional:
+	- GraphicsMagick headers and library
