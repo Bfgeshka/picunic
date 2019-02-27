@@ -95,7 +95,12 @@ S_I_get_mean ( PixelPacket * pixels )
 void
 I_finish ( void )
 {
-	IL_free_imagelist(&Images);
+	IL_free_imagelist_payload(&Images);
+	IL_free_list(&Images);
+
+	IL_free_simgrouplist_payload(&Simlist);
+	IL_free_list(&Simlist);
+
 	DestroyMagick();
 }
 
