@@ -35,7 +35,7 @@
 /* About */
 /* *
  * Image loading implementation based on stb header-only libraries.
- * More info: https://github.com/nothings/stb
+ * More info and more portable libs: https://github.com/nothings/stb
  * */
 
 /* Macros */
@@ -50,8 +50,19 @@
 #include "3rdparty/stb_image_resize.h"
 
 /* Local scope */
+uint8_t S_I_get_mean ( uint8_t * pixels );
 
-/* Global scope */
+uint8_t
+S_I_get_mean ( uint8_t * pixels )
+{
+	unsigned long sum = 0;
+	unsigned short i = 0;
+	for ( ; i < config.square; ++i )
+		sum += pixels[i];
+
+	return (uint8_t)( sum / config.square );
+}
+
 /* Global scope */
 void
 I_init ( char * path )
@@ -71,15 +82,25 @@ I_process ( string * instr )
 	int w = -1;
 	int h = -1;
 	int n = -1;
-	unsigned char * data = stbi_load( instr->s, &w, &h, &n, 1 );
+	uint8_t * data = stbi_load( instr->s, &w, &h, &n, 1 );
 
 	if ( data == NULL )
 		return NULL;
 
-	fprintf( stderr, "Loaded %s: %dx%d, %d channels...\n", instr->s, w, h, n );
-
-	imgdata * retvalue = NULL;
-
+	uint8_t * resized = malloc(config.square);
+	stbir_resize_uint8( data , w , h , 0, resized, config.avghash_side, config.avghash_side, 0, 1 );
 	free(data);
+
+	uint8_t mean = S_I_get_mean(resized);
+
+	imgdata * retvalue = malloc(sizeof(imgdata));
+	retvalue->path = stringcopy(instr);
+	retvalue->hash = 0;
+	retvalue->group = NULL;
+
+	for ( uint i = 0; i < config.square; ++i )
+		retvalue->hash |= (HASHTYPE)( (unsigned)( mean - resized[i] ) >> ( sizeof(int) * 8 - 1 ) ) << i;
+
+	free(resized);
 	return retvalue;
 }
