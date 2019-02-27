@@ -4,7 +4,7 @@
 #include "files.h"
 #include <stdlib.h>
 #include <stdio.h>
-#define DEFAULT_PRECISION 0.91f
+#define DEFAULT_PRECISION 0.95f
 #define DEFAULT_AVGHASH_SIDE 8
 
 /* Global scope */
