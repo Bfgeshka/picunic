@@ -181,14 +181,13 @@ void
 I_process ( string * instr )
 {
 	ExceptionInfo ex;
-	ImageInfo * image_info;
+	ImageInfo * image_info = CloneImageInfo((ImageInfo *)NULL);
 	Image * resized_image;
 
 	string * str = stringcopy(instr);
 
 	GetExceptionInfo(&ex);
 
-	image_info = CloneImageInfo((ImageInfo *)NULL);
 	snprintf( image_info->filename, str->length + 1, "%s", str->s );
 
 	{
