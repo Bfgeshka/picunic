@@ -113,9 +113,9 @@ I_init ( char * path )
 void
 I_compare_all ( void )
 {
-	listel * currenthead = Images.head;
 	unsigned long i = 0;
 	unsigned long j = i + 1;
+	listel * currenthead = Images.head;
 
 	for ( ; i + 1 < Images.length; ++i )
 	{
@@ -192,9 +192,6 @@ I_process ( string * instr )
 
 	{
 		Image * image = ReadImage( image_info, &ex );
-
-		if ( ex.severity != UndefinedException )
-			CatchException(&ex);
 
 		if ( !image )
 		{
