@@ -136,7 +136,7 @@ I_result ( void )
 	{
 		simgroup * curgroup = (simgroup *)currenthead->data;
 		listel * curimg = curgroup->images.head;
-		size_t cmdlinesize = strlen(config.cmdline) + 1;
+		size_t cmdlinesize = ( config.customcmd ) ? strlen(config.cmdline) + 1 : 0;
 
 		fprintf( stderr, "Group %lu/%lu (%" PRIxFAST64 "), %lu images:\n", i + 1, Simlist.length, curgroup->grhash, curgroup->images.length );
 
@@ -165,7 +165,7 @@ I_result ( void )
 
 			A_custom_command(str->s);
 
-/* 			free_string(str); TODO: fix this */
+ 			free_string(str);
 		}
 
 		currenthead = currenthead->next;
