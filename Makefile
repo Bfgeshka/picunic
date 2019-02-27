@@ -9,7 +9,7 @@ CFLAGS ::= -O2 -s -Wall -Wextra -Wpedantic  -D_DEFAULT_SOURCE -D_POSIX_C_SOURCE
 LDFLAGS ::=
 INCLUDE ::= -I./include
 
-all: clean gm
+all: stb
 
 options:
 	@echo "CFLAGS   = ${CFLAGS}"
@@ -17,7 +17,8 @@ options:
 	@echo "INCLUDE  = ${INCLUDE}"
 	@echo "CC       = ${CC}"
 
-stb:	CFLAGS += --std=c99
+## -Wno-type-limits for current (27.02.2019) state; --std=c99 for doubleslash comments
+stb:	CFLAGS += --std=c99 -Wno-type-limits
 stb:	SRC += src/image_stb.c
 stb:	SUFFIX = -stb
 stb:	options compile
@@ -33,7 +34,7 @@ compile:
 	${CC} ${SRC} ${INCLUDE} ${CFLAGS} ${LDFLAGS} -o ${NAME}${SUFFIX}
 
 clean:
-	rm -f ${NAME}
+	rm -f ${NAME}${SUFFIX}
 
 install:
 	cp -i ${NAME} ${PREFIX}/bin
