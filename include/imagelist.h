@@ -39,7 +39,9 @@ typedef struct simgroup
 
 /* Protos */
 void IL_add_to_list ( list * ls, void * data );
-void IL_free_imagelist ( list * il );
+void IL_free_list ( list * il );
+void IL_free_imagelist_payload ( list * il );
+void IL_free_simgrouplist_payload ( list * il );
 void IL_add_to_simgroup ( simgroup * grp, imgdata * im );
 
 #endif
