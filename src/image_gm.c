@@ -53,6 +53,7 @@ S_I_get_mean ( PixelPacket * pixels )
 void
 I_init ( char * path )
 {
+	config.regexp = "(jpe?g?|gif|png)$";
 	InitializeMagick(path);
 }
 

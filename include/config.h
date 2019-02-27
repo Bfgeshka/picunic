@@ -5,6 +5,7 @@
 struct config
 {
 	char * cmdline;
+	char * regexp;
 	float precision;
 	unsigned avghash_side;
 	unsigned square;

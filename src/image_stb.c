@@ -68,6 +68,7 @@ void
 I_init ( char * path )
 {
 	(void)path;
+	config.regexp = "(jpe?g?|png|psd|tga|bmp)$";
 }
 
 void

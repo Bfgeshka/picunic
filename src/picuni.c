@@ -8,8 +8,8 @@ int
 main ( int argc, char ** argv )
 {
 	A_args( argc, argv );
-	F_cook_regexp();
 	HP_init(argv[0]);
+	F_cook_regexp();
 
 	F_load_all_paths();
 	HP_compare_all();
