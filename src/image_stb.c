@@ -68,11 +68,18 @@ I_finish ( void )
 imgdata *
 I_process ( string * instr )
 {
-	int x, y, n;
-	unsigned char * data = stbi_load( instr->s, &x, &y, &n, 3 );
+	int w = -1;
+	int h = -1;
+	int n = -1;
+	unsigned char * data = stbi_load( instr->s, &w, &h, &n, 1 );
 
-	if ( data != NULL )
-		fprintf( stderr, "Loaded %s...\n", instr->s );
+	if ( data == NULL )
+		return NULL;
 
+	fprintf( stderr, "Loaded %s: %dx%d, %d channels...\n", instr->s, w, h, n );
+
+	imgdata * retvalue = NULL;
+
+	free(data);
 	return retvalue;
 }
