@@ -3,9 +3,10 @@
 
 /* Macros */
 #include "stringutils.h"
+#include "imagelist.h"
 
 /* Protos */
-void HP_process ( string * path );
+int HP_process ( string * path );
 void HP_finish ( void );
 void HP_compare_all( void );
 void HP_result ( void );
