@@ -129,7 +129,7 @@ HP_result ( void )
 		for ( j = 0; j < curgroup->images.length; ++j )
 		{
 			imgdata * img = (imgdata *)curimg->data;
-			fprintf( stderr, "\t%" PRIxFAST64 "\t%s\n", img->hash, img->path->s );
+			fprintf( stderr, "\t%016" PRIxFAST64 "\t%s\n", img->hash, img->path->s );
 
 			cmdlinesize += img->path->length + 3;
 
