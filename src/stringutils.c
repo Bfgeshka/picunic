@@ -31,10 +31,10 @@ string *
 stringcopy ( string * instr )
 {
 	string * str = malloc(sizeof(string));
-	str->length = instr->length;
-	str->bytes = instr->length;
-	str->s = malloc(instr->length);
-	snprintf( str->s, str->length + 1, "%s", instr->s );
+	str->length = instr->length + 1;
+	str->bytes = str->length;
+	str->s = malloc(str->length);
+	snprintf( str->s, str->length, "%s", instr->s );
 
 	return str;
 }
