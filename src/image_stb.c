@@ -74,6 +74,7 @@ S_I_ghash ( string * instr )
 	if ( data == NULL )
 		return NULL;
 
+	/* TODO: one time allocation */
 	uint8_t * resized = malloc(config.square + config.sq_h);
 	stbir_resize_uint8( data, w, h, 0, resized, config.sq_w + 1, config.sq_h, 0, 1 );
 	free(data);
