@@ -59,11 +59,11 @@ typedef struct string
 } string;
 
 /* Protos */
-string * construct_string ( size_t );
-string * stringcopy ( string * );
-void newstring ( string *, size_t );
-void stringset ( string *, const char *, ... );
-void stringcat ( string *, const char *, ... );
-void free_string ( string * );
+string * construct_string ( size_t size );
+string * stringcopy ( string * src );
+void newstring ( string * dst, size_t src );
+void stringset ( string * dst, const char * fmt, ... );
+void stringcat ( string * dst, const char * fmt, ... );
+void free_string ( string * str );
 
 #endif
