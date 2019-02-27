@@ -75,7 +75,7 @@ S_I_ghash ( string * instr )
 		return NULL;
 
 	uint8_t * resized = malloc(config.square + config.sq_h);
-	stbir_resize_uint8( data , w , h , 0, resized, config.sq_w + 1, config.sq_h, 0, 1 );
+	stbir_resize_uint8( data, w, h, 0, resized, config.sq_w + 1, config.sq_h, 0, 1 );
 	free(data);
 
 	imgdata * retvalue = malloc(sizeof(imgdata));
@@ -107,7 +107,7 @@ S_I_ahash ( string * instr )
 		return NULL;
 
 	uint8_t * resized = malloc(config.square);
-	stbir_resize_uint8( data , w , h , 0, resized, config.sq_w, config.sq_h, 0, 1 );
+	stbir_resize_uint8( data, w, h, 0, resized, config.sq_w, config.sq_h, 0, 1 );
 	free(data);
 
 	uint8_t mean = S_I_get_mean(resized);
