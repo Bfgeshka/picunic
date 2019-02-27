@@ -3,7 +3,6 @@
 
 /* Macros */
 #include "stringutils.h"
-#include "imagelist.h"
 
 /* Protos */
 int HP_process ( string * path );
