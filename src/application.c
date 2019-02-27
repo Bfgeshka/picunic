@@ -46,7 +46,8 @@ void
 A_custom_command ( char * line )
 {
 	fprintf( stderr, "Calling %s...\n", line );
-	system(line);
+	int z = system(line);
+	fprintf( stderr, "system(%s) finished with status %d\n", line, z );
 }
 
 void
