@@ -1,6 +1,6 @@
 CC = cc
 
-SRC = src/picuni.c src/application.c src/files.c src/image.c src/imagelist.c src/stringutils.c
+SRC = src/picuni.c src/application.c src/files.c src/imagelist.c src/stringutils.c src/hashprocess.c src/image_gm.c
 
 NAME = picunic
 PREFIX = /usr/local
@@ -19,9 +19,6 @@ options:
 
 ${NAME}:
 	${CC} ${SRC} ${INCLUDE} ${CFLAGS} ${LDFLAGS} -o ${NAME}
-
-config:
-	cp -n config.def.h config.h
 
 clean:
 	rm -f ${NAME}
