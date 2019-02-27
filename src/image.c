@@ -96,6 +96,13 @@ void
 I_finish ( void )
 {
 	IL_free_imagelist(&Images);
+	DestroyMagick();
+}
+
+void
+I_init ( char * path )
+{
+	InitializeMagick(path);
 }
 
 void
@@ -174,7 +181,6 @@ I_process ( string * instr )
 
 	string * str = stringcopy(instr);
 
-	InitializeMagick(NULL);
 	GetExceptionInfo(&ex);
 
 	image_info = CloneImageInfo((ImageInfo *)NULL);
@@ -212,5 +218,4 @@ I_process ( string * instr )
 	S_I_check_onexit:
 	DestroyImageInfo(image_info);
 	DestroyExceptionInfo(&ex);
-	DestroyMagick();
 }
