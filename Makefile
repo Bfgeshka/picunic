@@ -23,8 +23,9 @@ options:
 	@echo "CC       = ${CC}"
 
 ## -Wno-type-limits for current (27.02.2019) state; --std=c99 for doubleslash comments
-stb:	CFLAGS += --std=c99 -Wno-type-limits
+stb:	CFLAGS += --std=c99 -Wno-type-limits -Wno-unused-parameter
 stb:	SRC += src/image_stb.c
+stb:	LDFLAGS += -lm
 stb:	SUFFIX = -stb
 stb:	options compile
 
