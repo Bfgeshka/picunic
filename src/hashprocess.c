@@ -2,42 +2,19 @@
 #include "image.h"
 #include "imagelist.h"
 #include "config.h"
-#include "stringutils.h"
 #include "application.h"
-#include <magick/api.h>
+#include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 /* Local scope */
 static list Images;
 static list Simlist;
 
-static unsigned long S_I_get_mean ( PixelPacket * pixels );
-static void S_I_compare ( listel * img1, listel * img2 );
-static void S_I_hash_from_thumb ( Image * image, string * str );
+static void S_HP_compare ( listel * img1, listel * img2 );
 
 static void
-S_I_hash_from_thumb ( Image * image, string * str )
-{
-	unsigned short i = 0;
-	PixelPacket * pixels;
-	unsigned long mean;
-
-	imgdata * imdat = malloc(sizeof(imgdata));
-	imdat->path = str;
-	imdat->hash = 0;
-	imdat->group = NULL;
-
-	pixels = GetImagePixels( image, 0, 0, config.avghash_side, config.avghash_side );
-	mean = S_I_get_mean(pixels);
-
-	for ( ; i < config.square; ++i )
-		imdat->hash |= (HASHTYPE)( (unsigned)( mean - pixels[i].red ) >> ( sizeof(int) * 8 - 1 ) ) << i;
-
-	IL_add_to_list( &Images, imdat );
-}
-
-static void
-S_I_compare ( listel * img1, listel * img2 )
+S_HP_compare ( listel * img1, listel * img2 )
 {
 	unsigned similar_bits = config.square;
 	imgdata * im1 = (imgdata *)img1->data;
@@ -79,39 +56,27 @@ S_I_compare ( listel * img1, listel * img2 )
 	}
 }
 
-static unsigned long
-S_I_get_mean ( PixelPacket * pixels )
-{
-	unsigned long colr = 0;
-
-	unsigned long i = 0;
-	for ( ; i < config.square; ++i )
-		colr += pixels[i].red;
-
-	return colr / config.square;
-}
-
 /* Global scope */
 void
-I_finish ( void )
+HP_init ( char * path )
 {
+	I_init(path);
+}
+
+void
+HP_finish ( void )
+{
+	I_finish();
+
 	IL_free_imagelist_payload(&Images);
 	IL_free_list(&Images);
 
 	IL_free_simgrouplist_payload(&Simlist);
 	IL_free_list(&Simlist);
-
-	DestroyMagick();
 }
 
 void
-I_init ( char * path )
-{
-	InitializeMagick(path);
-}
-
-void
-I_compare_all ( void )
+HP_compare_all ( void )
 {
 	unsigned long i = 0;
 	unsigned long j = i + 1;
@@ -122,7 +87,7 @@ I_compare_all ( void )
 		listel * currenttail = currenthead->next;
 		for ( j = i + 1; j < Images.length; ++j )
 		{
-			S_I_compare( currenthead, currenttail );
+			S_HP_compare( currenthead, currenttail );
 			currenttail = currenttail->next;
 		}
 
@@ -131,7 +96,7 @@ I_compare_all ( void )
 }
 
 void
-I_result ( void )
+HP_result ( void )
 {
 	listel * currenthead = Simlist.head;
 	unsigned long i = 0;
@@ -178,45 +143,10 @@ I_result ( void )
 }
 
 void
-I_process ( string * instr )
+HP_process ( string * path )
 {
-	ExceptionInfo ex;
-	ImageInfo * image_info = CloneImageInfo((ImageInfo *)NULL);
-	Image * resized_image;
+	imgdata * img = I_process(path);
 
-	string * str = stringcopy(instr);
-
-	GetExceptionInfo(&ex);
-
-	snprintf( image_info->filename, str->length + 1, "%s", str->s );
-
-	{
-		Image * image = ReadImage( image_info, &ex );
-
-		if ( !image )
-		{
-			free_string(str);
-			goto S_I_check_onexit;
-		}
-
-		resized_image = ResizeImage( image, config.avghash_side, config.avghash_side, LanczosFilter, 1.0 ,&ex );
-		DestroyImage(image);
-	}
-
-	if ( resized_image == (Image *)NULL )
-	{
-		fputs( "Failed to resize.\n", stderr );
-		CatchException(&ex);
-
-		free_string(str);
-		goto S_I_check_onexit;
-	}
-
-	GrayscalePseudoClassImage( resized_image, 1 );
-	S_I_hash_from_thumb( resized_image, str );
-	DestroyImage(resized_image);
-
-	S_I_check_onexit:
-	DestroyImageInfo(image_info);
-	DestroyExceptionInfo(&ex);
+	if ( img != NULL )
+		IL_add_to_list( &Images, img );
 }
