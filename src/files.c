@@ -2,7 +2,7 @@
 #include "config.h"
 #include "files.h"
 #include "stringutils.h"
-#include "image.h"
+#include "hashprocess.h"
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
@@ -24,7 +24,7 @@ S_F_get_if_image ( string * path )
 	{
 		case 0:
 		{
-			I_process(path);
+			HP_process(path);
 			return 1;
 		}
 		case REG_NOMATCH:
