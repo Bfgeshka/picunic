@@ -12,6 +12,22 @@ static list Images;
 static list Simlist;
 
 static void S_HP_compare ( listel * img1, listel * img2 );
+static void S_HP_add_to_simgroup ( simgroup * grp, imgdata * im );
+static void S_HP_rehash_simgroup ( simgroup * grp );
+
+/* TODO: replace with proper group hash */
+static void
+S_HP_rehash_simgroup ( simgroup * grp )
+{
+	grp->grhash = ((imgdata *)grp->images.head->data)->hash;
+}
+
+static void
+S_HP_add_to_simgroup ( simgroup * grp, imgdata * im )
+{
+	IL_add_to_simgroup( grp, im );
+	S_HP_rehash_simgroup(grp);
+}
 
 static void
 S_HP_compare ( listel * img1, listel * img2 )
@@ -42,16 +58,16 @@ S_HP_compare ( listel * img1, listel * img2 )
 			grp->images.head = NULL;
 			grp->images.tail = NULL;
 
-			IL_add_to_simgroup( grp, im1 );
-			IL_add_to_simgroup( grp, im2 );
+			S_HP_add_to_simgroup( grp, im1 );
+			S_HP_add_to_simgroup( grp, im2 );
 			IL_add_to_list( &Simlist, (void *)grp );
 		}
 		else
 		{
 			if ( im1->group == NULL )
-				IL_add_to_simgroup( im2->group, im1 );
+				S_HP_add_to_simgroup( im2->group, im1 );
 			else
-				IL_add_to_simgroup( im1->group, im2 );
+				S_HP_add_to_simgroup( im1->group, im2 );
 		}
 	}
 }
