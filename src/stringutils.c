@@ -57,9 +57,7 @@ free_string ( string * str )
 	if ( str == NULL )
 		return;
 
-	if ( str != NULL )
-		free(str->s);
-
+	free(str->s);
 	free(str);
 }
 
