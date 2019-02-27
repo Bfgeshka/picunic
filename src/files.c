@@ -96,7 +96,7 @@ F_check_path ( char * path )
 void
 F_cook_regexp ( void )
 {
-	int err_ret = regcomp( &Image_regex, "(jpe?g?|gif|png)$", REG_ICASE | REG_EXTENDED | REG_NOSUB );
+	int err_ret = regcomp( &Image_regex, config.regexp, REG_ICASE | REG_EXTENDED | REG_NOSUB );
 	if ( err_ret != 0 )
 	{
 		fputs( "Failed to compile regexp, exitting...", stderr );
