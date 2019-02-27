@@ -19,6 +19,7 @@ options:
 
 stb:	CFLAGS += --std=c99
 stb:	SRC += src/image_stb.c
+stb:	SUFFIX = -stb
 stb:	options compile
 
 gm:	CFLAGS += --std=c89
