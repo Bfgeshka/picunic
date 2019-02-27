@@ -1,6 +1,8 @@
 /* About */
 /* *
  * Image loading implementation based on GraphicsMagick C API
+ * WARNING: this implementation consumes tons of memory for no reason,
+ * beware or tell me how to fix it.
  * */
 
 /* Macros */
