@@ -11,6 +11,11 @@ INCLUDE ::= -I./include
 
 all: stb
 
+help:
+	@echo "Available targets:"
+	@echo "	make stb: stb library version (c99)"
+	@echo "	make gm:  GraphicsMagick version (c89)"
+
 options:
 	@echo "CFLAGS   = ${CFLAGS}"
 	@echo "LDFLAGS  = ${LDFLAGS}"
