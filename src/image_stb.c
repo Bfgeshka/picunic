@@ -45,6 +45,13 @@
 #include "stringutils.h"
 
 #define STBI_ASSERT(x)
+#define STBI_NO_GIF
+#define STBI_NO_HDR
+#define STBI_NO_PIC
+#define STBI_NO_PNM
+#define STBI_NO_PSD
+#define STBI_NO_TGA
+#define STBI_NO_BMP
 #define STB_IMAGE_IMPLEMENTATION
 #include "3rdparty/stb_image.h"
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
@@ -69,7 +76,7 @@ void
 I_init ( char * path )
 {
 	(void)path;
-	config.regexp = "(jpe?g?|png|psd|tga|bmp)$";
+	config.regexp = "(jpe?g?|png)$";
 }
 
 void
@@ -90,7 +97,7 @@ I_process ( string * instr )
 		return NULL;
 
 	uint8_t * resized = malloc(config.square);
-	stbir_resize_uint8( data , w , h , 0, resized, config.avghash_side, config.avghash_side, 0, 1 );
+	stbir_resize_uint8( data , w , h , 0, resized, config.sq_w, config.sq_h, 0, 1 );
 	free(data);
 
 	uint8_t mean = S_I_get_mean(resized);

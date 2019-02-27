@@ -62,7 +62,7 @@ S_I_hash_from_thumb ( Image * image, string * str )
 	imdat->hash = 0;
 	imdat->group = NULL;
 
-	pixels = GetImagePixels( image, 0, 0, config.avghash_side, config.avghash_side );
+	pixels = GetImagePixels( image, 0, 0, config.sq_w, config.sq_h );
 	mean = S_I_get_mean(pixels);
 
 	for ( ; i < config.square; ++i )
@@ -119,7 +119,7 @@ I_process ( string * instr )
 			goto S_I_check_onexit;
 		}
 
-		resized_image = ResizeImage( image, config.avghash_side, config.avghash_side, LanczosFilter, 1.0 ,&ex );
+		resized_image = ResizeImage( image, config.sq_w, config.sq_h, LanczosFilter, 1.0 ,&ex );
 		if ( resized_image == (Image *)NULL )
 		{
 			fputs( "Failed to resize.\n", stderr );

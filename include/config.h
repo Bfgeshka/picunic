@@ -46,7 +46,8 @@ struct config
 	char * cmdline;
 	char * regexp;
 	float precision;
-	unsigned avghash_side;
+	unsigned sq_w;
+	unsigned sq_h;
 	unsigned square;
 	unsigned recursive : 1;
 	unsigned customcmd : 1;
