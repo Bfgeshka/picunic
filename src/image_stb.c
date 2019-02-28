@@ -58,7 +58,11 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #include "3rdparty/stb_image_resize.h"
 
+#define USE_DHASH
+
 /* Local scope */
+static uint8_t * Resized = NULL;
+
 static uint8_t S_I_get_mean ( uint8_t * pixels );
 static imgdata * S_I_ahash ( string * instr );
 static imgdata * S_I_ghash ( string * instr );
@@ -74,9 +78,7 @@ S_I_ghash ( string * instr )
 	if ( data == NULL )
 		return NULL;
 
-	/* TODO: one time allocation */
-	uint8_t * resized = malloc(config.square + config.sq_h);
-	stbir_resize_uint8( data, w, h, 0, resized, config.sq_w + 1, config.sq_h, 0, 1 );
+	stbir_resize_uint8( data, w, h, 0, Resized, config.sq_w + 1, config.sq_h, 0, 1 );
 	free(data);
 
 	imgdata * retvalue = malloc(sizeof(imgdata));
@@ -87,13 +89,11 @@ S_I_ghash ( string * instr )
 	for ( unsigned u = 0, i = 0; u < config.sq_h; ++u )
 	{
 		for ( unsigned v = 0; v < config.sq_w; ++v, ++i )
-			retvalue->hash |= (HASHTYPE)( (unsigned)( resized[i] - resized[i + 1] ) >> ( sizeof(int) * 8 - 1 ) ) << i;
+			retvalue->hash |= (HASHTYPE)( (unsigned)( Resized[i] - Resized[i + 1] ) >> ( sizeof(int) * 8 - 1 ) ) << i;
 		i++;
 	}
 
-	free(resized);
 	return retvalue;
-
 }
 
 static imgdata *
@@ -107,11 +107,10 @@ S_I_ahash ( string * instr )
 	if ( data == NULL )
 		return NULL;
 
-	uint8_t * resized = malloc(config.square);
-	stbir_resize_uint8( data, w, h, 0, resized, config.sq_w, config.sq_h, 0, 1 );
+	stbir_resize_uint8( data, w, h, 0, Resized, config.sq_w, config.sq_h, 0, 1 );
 	free(data);
 
-	uint8_t mean = S_I_get_mean(resized);
+	uint8_t mean = S_I_get_mean(Resized);
 
 	imgdata * retvalue = malloc(sizeof(imgdata));
 	retvalue->path = stringcopy(instr);
@@ -119,9 +118,8 @@ S_I_ahash ( string * instr )
 	retvalue->group = NULL;
 
 	for ( unsigned i = 0; i < config.square; ++i )
-		retvalue->hash |= (HASHTYPE)( (unsigned)( mean - resized[i] ) >> ( sizeof(int) * 8 - 1 ) ) << i;
+		retvalue->hash |= (HASHTYPE)( (unsigned)( mean - Resized[i] ) >> ( sizeof(int) * 8 - 1 ) ) << i;
 
-	free(resized);
 	return retvalue;
 }
 
@@ -142,12 +140,20 @@ I_init ( char * path )
 {
 	(void)path;
 	config.regexp = "(jpe?g?|png)$";
+
+	#ifdef USE_DHASH
+		fputs( "Using gradient hash for main pass.\n", stderr );
+		Resized = malloc(config.square + config.sq_h);
+	#else
+		fputs( "Using mean hash for main pass.\n", stderr );
+		Resized = malloc(config.square);
+	#endif
 }
 
 void
 I_finish ( void )
 {
-	;
+	free(Resized);
 }
 
 imgdata *
