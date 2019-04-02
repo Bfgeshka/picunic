@@ -36,7 +36,7 @@
  */
 
 /* * About * *
- * Working with filesystem, heavily relies on POSIX.
+ * Working with filesystem.
  * Stores provided paths.
  * */
 

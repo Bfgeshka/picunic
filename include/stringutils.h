@@ -40,7 +40,7 @@
  * Suited for:
  * 	function arguments, no additional var for buffer or length;
  * 	replacing sprintf() and strcat();
- * 	read-once-use-ofter usage,no need for strlen();
+ * 	read-once-use-often usage, no need for strlen();
  *
  * Heap allocated, call for free_string() when you have finished with it.
  * Beware, there is no reallocation inside stringset() and stringcat(),

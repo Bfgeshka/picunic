@@ -35,7 +35,7 @@
 /* * About * *
  * Mean hash.
  * Gradient hash (default).
- * Image loading implementation based on stb header-only libraries.
+ * Image loading implementation uses stb header-only libraries.
  * More info and more portable libs: https://github.com/nothings/stb
  * */
 

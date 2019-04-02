@@ -36,8 +36,8 @@
  */
 
 /* * About * *
- * Functions for manipulating image hashed.
- * Does not calculate image hash itself.
+ * Functions for manipulating image hashes.
+ * Aren't calculating image hashes themselves.
  * */
 
 /* Macros */

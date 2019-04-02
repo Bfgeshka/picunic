@@ -36,6 +36,7 @@
  */
 
 /* * About * *
+ * Image processing.
  * Check image_*.c files for more info.
  * */
 
